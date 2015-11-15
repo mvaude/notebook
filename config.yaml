@@ -4,8 +4,8 @@ layoutdir: "layouts"
 publishdir: "public"
 indexes:
   category: "categories"
-baseurl: "http://mvaude.github.io/hugo_boilerplate"
-title: "Hugo Blog Template for GitHub Pages"
+baseurl: "http://mvaude.github.io/notebook"
+title: "Notebook"
 canonifyurls: true
 ...
 
