@@ -1,4 +1,4 @@
-baseurl = "http://mvaude.github.io/notebook"
+baseurl = "https://mvaude.github.io/notebook"
 title = "Notebook"
 canonifyurls = true
 paginate = 10
@@ -11,7 +11,7 @@ copyright = "Code released WTFPL license."
     
 [params]
   DateForm = "Sun, Nov 15, 2015"
-  Description = "Notes about stuff if interest int"
+  Description = "Notes about stuff"
   Author = "Maxime Vaude"
   email = "maxime.vaude@gmail.com"
   Ganalytics = "XX-00000000-0"

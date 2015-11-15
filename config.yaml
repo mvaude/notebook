@@ -4,7 +4,7 @@ layoutdir: "layouts"
 publishdir: "public"
 indexes:
   category: "categories"
-baseurl: "http://mvaude.github.io/notebook"
+baseurl: "https://mvaude.github.io/notebook"
 title: "Notebook"
 canonifyurls: true
 ...
