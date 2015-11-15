@@ -206,5 +206,4 @@ In computer programming, in particular in a Unix-like environment, glob patterns
 
 # Resources
 
-Almost all the content from this page come from this resources:
 * Joel Longie Youtube playlist ![alt][https://www.youtube.com/watch?v=LmdT2zhFmn4&list=PLv1YUP7gO_viROuRcGsDCNM-FUVgMYb_G]

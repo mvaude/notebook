@@ -1,29 +1,842 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My New Hugo Site</title>
-    <link>http://localhost:1313/hugo-boilerplate/</link>
-    <description>Recent content on My New Hugo Site</description>
+    <title>Notebook</title>
+    <link>http://localhost:1313/notebook/</link>
+    <description>Recent content on Notebook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Nov 2015 19:33:04 +0100</lastBuildDate>
-    <atom:link href="http://localhost:1313/hugo-boilerplate/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Code released WTFPL license.</copyright>
+    <lastBuildDate>Sun, 15 Nov 2015 23:44:05 +0100</lastBuildDate>
+    <atom:link href="http://localhost:1313/notebook/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>first</title>
-      <link>http://localhost:1313/hugo-boilerplate/post/first/</link>
-      <pubDate>Sun, 15 Nov 2015 19:33:04 +0100</pubDate>
+      <title>gulp</title>
+      <link>http://localhost:1313/notebook/post/gulp/</link>
+      <pubDate>Sun, 15 Nov 2015 23:44:05 +0100</pubDate>
       
-      <guid>http://localhost:1313/hugo-boilerplate/post/first/</guid>
+      <guid>http://localhost:1313/notebook/post/gulp/</guid>
+      <description>
+
+&lt;h1 id=&#34;gulp:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Gulp&lt;/h1&gt;
+
+&lt;p&gt;Gulp is a javascript streaming build system&lt;/p&gt;
+
+&lt;h1 id=&#34;fundamentals:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Fundamentals&lt;/h1&gt;
+
+&lt;h2 id=&#34;what-is-a-build-system:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;What Is A Build System ?&lt;/h2&gt;
+
+&lt;p&gt;A build system is simply a collection of tasks (commonly called &amp;ldquo;task runners&amp;rdquo;) that automate repetetive work.&lt;/p&gt;
+
+&lt;h2 id=&#34;component-of-a-modern-worfklow:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Component of a Modern Worfklow&lt;/h2&gt;
+
+&lt;p&gt;Three different components:
+* Package Managers
+* Preprocessors
+* Task Runners &amp;amp; Build Tools&lt;/p&gt;
+
+&lt;h3 id=&#34;package-managers:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Package Managers&lt;/h3&gt;
+
+&lt;p&gt;Automates packages and libraries used in your dev environment:
+* installation
+* upgrading
+* removal
+* dependencies&lt;/p&gt;
+
+&lt;h4 id=&#34;package-managers-dependencies:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Package Managers Dependencies&lt;/h4&gt;
+
+&lt;p&gt;You can use 2 different package managers:
+* Bower
+* NPM&lt;/p&gt;
+
+&lt;h5 id=&#34;bower-project-files:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Bower (Project Files)&lt;/h5&gt;
+
+&lt;p&gt;Manages front-end dependencies (ex: jQuery, Backbone, AngualasJS).&lt;/p&gt;
+
+&lt;h5 id=&#34;npm-node-js:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;NPM (Node.js)&lt;/h5&gt;
+
+&lt;p&gt;Manages node environment dev dependencies (ex: Gulp, Browser-Syc, Plumber)&lt;/p&gt;
+
+&lt;h3 id=&#34;preprocessors:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Preprocessors&lt;/h3&gt;
+
+&lt;p&gt;Preprocessors are critical to an efficient modern workflow by adding additional features and an optimized syntax that compiles into its native language.&lt;/p&gt;
+
+&lt;h4 id=&#34;css:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;CSS&lt;/h4&gt;
+
+&lt;p&gt;Sass, Less, Stylus.&lt;/p&gt;
+
+&lt;h4 id=&#34;javascript:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Javascript&lt;/h4&gt;
+
+&lt;p&gt;CofeeScript, Typescript.&lt;/p&gt;
+
+&lt;h4 id=&#34;html:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;HTML&lt;/h4&gt;
+
+&lt;p&gt;HAML, Jade, Markdeep, Markdown, Slim.&lt;/p&gt;
+
+&lt;h3 id=&#34;task-based-build-tools:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Task Based Build Tools&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gulp and Grunt&lt;/li&gt;
+&lt;li&gt;Run on Node&lt;/li&gt;
+&lt;li&gt;Similar anatomy&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;structure-of-a-typical-gulp-file:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Structure of a Typical Gulp File&lt;/h4&gt;
+
+&lt;h5 id=&#34;required-modules:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Required Modules&lt;/h5&gt;
+
+&lt;p&gt;Declare requires dependencies&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var gulp = require(&#39;gulp&#39;);
+var uglify = require(&#39;gulp-uglify&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;named-tasks:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Named Tasks&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Compressing static images&lt;/li&gt;
+&lt;li&gt;Copying files&lt;/li&gt;
+&lt;li&gt;Deployment build&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;gulp.tasks(&#39;scripts&#39;, function() {
+  \\ code
+});
+
+$ gulp scripts
+`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;watch-task:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Watch Task&lt;/h5&gt;
+
+&lt;p&gt;Watch folder &lt;code&gt;js&lt;/code&gt; for all files ending in .js then on change run &amp;lsquo;script&amp;rsquo; task.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gulp.task(&#39;watch, function() {
+  gulp.watch(&#39;app/js/**/*.js&#39;, [&#39;scripts&#39;]);
+});
+
+$ gulp watch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h5 id=&#34;default-task:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Default Task&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Run both &lt;code&gt;scripts&lt;/code&gt; and &lt;code&gt;watch&lt;/code&gt; tasks.&lt;/li&gt;
+&lt;li&gt;Asynchronously, run all tasks at the same time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;  gulp.task(&#39;default&#39;, [&#39;scripts&#39;, &#39;watch&#39;]);
+
+  $ gulp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;gulp-vs-grunt:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Gulp vs Grunt&lt;/h3&gt;
+
+&lt;h4 id=&#34;learning:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Learning&lt;/h4&gt;
+
+&lt;h5 id=&#34;gulp-1:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Gulp&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Easier to learn and maintain&lt;/li&gt;
+&lt;li&gt;Code over configuration&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;curve:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Curve&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Steeper learning curve&lt;/li&gt;
+&lt;li&gt;Relies on A LOT of configuration
+
+&lt;ul&gt;
+&lt;li&gt;Syntax overly verbose&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;speed:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Speed&lt;/h4&gt;
+
+&lt;h5 id=&#34;gulp-2:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Gulp&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Faster&lt;/li&gt;
+&lt;li&gt;Streams&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&#34;curve-1:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Curve&lt;/h5&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Possibility Slower&lt;/li&gt;
+&lt;li&gt;Write to temp files&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;the-gulp-file:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;The Gulp File&lt;/h1&gt;
+
+&lt;h2 id=&#34;gulp-packages:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Gulp Packages&lt;/h2&gt;
+
+&lt;h3 id=&#34;gulp-3:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp&lt;/h3&gt;
+
+&lt;p&gt;The streaming build system.&lt;/p&gt;
+
+&lt;h3 id=&#34;gulp-plumber:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-plumber&lt;/h3&gt;
+
+&lt;p&gt;Prevents pipes from breaking caused by errors from gulp plugins.&lt;/p&gt;
+
+&lt;h3 id=&#34;gulp-uglify:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-uglify&lt;/h3&gt;
+
+&lt;p&gt;Minify files.&lt;/p&gt;
+
+&lt;h3 id=&#34;gulp-rename:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-rename&lt;/h3&gt;
+
+&lt;p&gt;Rename files.&lt;/p&gt;
+
+&lt;h3 id=&#34;gulp-sass:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-sass&lt;/h3&gt;
+
+&lt;h3 id=&#34;gulp-autoprefixer:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-autoprefixer&lt;/h3&gt;
+
+&lt;h3 id=&#34;gulp-smith:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-smith&lt;/h3&gt;
+
+&lt;h3 id=&#34;del:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;del&lt;/h3&gt;
+
+&lt;h3 id=&#34;gulp-sourcemaps:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gulp-sourcemaps&lt;/h3&gt;
+
+&lt;h3 id=&#34;browser-sync:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;browser-sync&lt;/h3&gt;
+
+&lt;h3 id=&#34;gul-concat:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;gul-concat&lt;/h3&gt;
+
+&lt;p&gt;Delete files/folders using globs&lt;/p&gt;
+
+&lt;h3 id=&#34;guld-browser-sync:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;guld-browser-sync&lt;/h3&gt;
+
+&lt;p&gt;Live CSS Reload &amp;amp; Brower Syncing&lt;/p&gt;
+
+&lt;h2 id=&#34;what-is-a-glob:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;What is A Glob ?&lt;/h2&gt;
+
+&lt;p&gt;In computer programming, in particular in a Unix-like environment, glob patterns specify sets of filenames with wildcard characters.&lt;/p&gt;
+
+&lt;h3 id=&#34;examples:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Examples&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;css/*.css&lt;/code&gt; -&amp;gt; files ending in &lt;code&gt;.css&lt;/code&gt; in the css directory.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;css/**/*.css&lt;/code&gt; -&amp;gt; files ending in &lt;code&gt;.css&lt;/code&gt; in the &lt;code&gt;css&lt;/code&gt; directory and child repositories.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;!css/styles.css&lt;/code&gt; -&amp;gt; exclude style.css file.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*.+(js|css)&lt;/code&gt; -&amp;gt; Matches all files in the &lt;code&gt;root&lt;/code&gt; directory ending in &lt;code&gt;.js&lt;/code&gt; or &lt;code&gt;.css&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;improvments:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Improvments&lt;/h3&gt;
+
+&lt;h1 id=&#34;resources:c34aea999ea1eeef6ae97c4fa3367837&#34;&gt;Resources&lt;/h1&gt;
+
+&lt;p&gt;Almost all the content from this page come from this resources:
+* Joel Longie Youtube playlist ![alt][&lt;a href=&#34;https://www.youtube.com/watch?v=LmdT2zhFmn4&amp;amp;list=PLv1YUP7gO_viROuRcGsDCNM-FUVgMYb_G&#34;&gt;https://www.youtube.com/watch?v=LmdT2zhFmn4&amp;amp;list=PLv1YUP7gO_viROuRcGsDCNM-FUVgMYb_G&lt;/a&gt;]&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>hugo</title>
+      <link>http://localhost:1313/notebook/post/hugo/</link>
+      <pubDate>Sun, 15 Nov 2015 23:43:34 +0100</pubDate>
+      
+      <guid>http://localhost:1313/notebook/post/hugo/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>Github Training</title>
+      <link>http://localhost:1313/notebook/post/github-training/</link>
+      <pubDate>Sun, 15 Nov 2015 23:29:50 +0100</pubDate>
+      
+      <guid>http://localhost:1313/notebook/post/github-training/</guid>
+      <description>
+
+&lt;h1 id=&#34;github-training:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Github Training&lt;/h1&gt;
+
+&lt;h2 id=&#34;introducing-git-and-github:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Introducing Git and Github&lt;/h2&gt;
+
+&lt;h3 id=&#34;what-is-github:169fb08356674dcaeffc1219453a0d8a&#34;&gt;What is Github ?&lt;/h3&gt;
+
+&lt;p&gt;GitHub is a website that allows your team to collaborate more effectively. It is built on top of Git—a distributed version control system. GitHub and Git help teams to collaborate more effectively on projects.&lt;/p&gt;
+
+&lt;p&gt;With Git, each person has a local copy of the project to work on. As they make changes locally, they can upload them to GitHub and download any changes that others have made.&lt;/p&gt;
+
+&lt;p&gt;GitHub provides access to a central copy of the code, as well as features like Pull Requests and Issues that make collaborating easier.&lt;/p&gt;
+
+&lt;h3 id=&#34;key-github-features:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Key GitHub Features&lt;/h3&gt;
+
+&lt;p&gt;In addition to being a place to host and share your Git projects, GitHub provides features, like Pull Requests and Issues, that make collaborating easier. Issues are general places for discussions about the project, from high-level planning to bug tracking. Pull Requests let you discuss and review specific changes to the project files themselves.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-github-ecosystem:169fb08356674dcaeffc1219453a0d8a&#34;&gt;The GitHub Ecosystem&lt;/h3&gt;
+
+&lt;p&gt;You can also use all of your favorite tools with GitHub. You don&amp;rsquo;t need to use a new text editor or bug tracker: your team gets to keep the tools they&amp;rsquo;re comfortable with.&lt;/p&gt;
+
+&lt;p&gt;GitHub can also integrate into your current deployment process, and fully supports continuous integration and continuous deployment to help you and your team build software better, together.&lt;/p&gt;
+
+&lt;p&gt;For more information on integrating GitHub with the tools you already use, refer to GitHub&amp;rsquo;s Integrations page.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started-with-collaboration:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Getting Started with Collaboration&lt;/h2&gt;
+
+&lt;h3 id=&#34;github-repositories:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Github Repositories&lt;/h3&gt;
+
+&lt;p&gt;A repository is the most basic element of GitHub. It is easiest to imagine as a project&amp;rsquo;s folder. However, unlike an ordinary folder on your laptop, a GitHub repository offers simple yet powerful tools for collaborating with others. A repository contains all of the project files, and stores the history of each file. Whether you are just curious or you are a major contributor, knowing your way around a repository is essential!&lt;/p&gt;
+
+&lt;h4 id=&#34;summary:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The repository (or &amp;ldquo;repo&amp;rdquo;) holds everything in your project—code, documentation, other important files.&lt;/li&gt;
+&lt;li&gt;Everything in the Code View of the repo is tracked by git version control.&lt;/li&gt;
+&lt;li&gt;The &amp;ldquo;&amp;lsquo;README.md&amp;rdquo;&amp;rsquo; file is shown at the bottom of the main page of the code view.&lt;/li&gt;
+&lt;li&gt;Issues are used to track bugs and feature requests, and can be assigned to team members.&lt;/li&gt;
+&lt;li&gt;A pull request represents a change that the author would like to make to the repo. PRs are used to resolve issues.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;using-issues:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Using Issues&lt;/h3&gt;
+
+&lt;p&gt;Use GitHub issues to record and discuss ideas, enhancements, tasks, and bugs. They make collaboration easier in a variety of ways, such as:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Replacing email for project discussions, ensuring everyone on the team has the complete story.&lt;/li&gt;
+&lt;li&gt;Allowing you to cross-link to other issues and pull requests.&lt;/li&gt;
+&lt;li&gt;Creating a single, comprehensive record of how and why you made certain decisions.&lt;/li&gt;
+&lt;li&gt;Allowing you to easily pull the right people into a conversation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;summary-1:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You can use Markdown to format issues.&lt;/li&gt;
+&lt;li&gt;You can @mention somebody in order to alert them of the issue.&lt;/li&gt;
+&lt;li&gt;The &amp;ldquo;Preview&amp;rdquo; tab shows how your comment will be rendered.&lt;/li&gt;
+&lt;li&gt;Add screenshots or pictures to the issue by simply dragging and dropping them into the comment field.&lt;/li&gt;
+&lt;li&gt;You can assign an issue to anyone with access to the repo.&lt;/li&gt;
+&lt;li&gt;Labels can be used to organize issues.&lt;/li&gt;
+&lt;li&gt;You can filter issues by label, author or assignee.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;the-github-workflow-branching-and-comitting:169fb08356674dcaeffc1219453a0d8a&#34;&gt;The GitHub WorkFlow: Branching and Comitting&lt;/h2&gt;
+
+&lt;h3 id=&#34;diving-into-github:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Diving into Github&lt;/h3&gt;
+
+&lt;p&gt;In this section we&amp;rsquo;ll explore GitHub&amp;rsquo;s functionality in depth.&lt;/p&gt;
+
+&lt;p&gt;You&amp;rsquo;ll have the chance to practice all the skills that we teach in your GitHub repository, so make sure not to move on until you&amp;rsquo;re sure you can perform these actions: you&amp;rsquo;ll need them in your day-to-day job.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-2:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Everything on GitHub lives on a branch.&lt;/li&gt;
+&lt;li&gt;The &amp;ldquo;canonical&amp;rdquo; version of the code lives on the master branch by convention.&lt;/li&gt;
+&lt;li&gt;Use new branches to experiment with the code without affecting master.&lt;/li&gt;
+&lt;li&gt;When you&amp;rsquo;re done experimenting and want to add the feature into master, you create a pull request (PR).&lt;/li&gt;
+&lt;li&gt;PRs don&amp;rsquo;t have to be perfect, but should be ready for other people to look at, comment on, and work on.&lt;/li&gt;
+&lt;li&gt;Once the changes to the PR are completed, the branch is &amp;ldquo;merged&amp;rdquo; into master and can then be removed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;create-a-branch:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Create a branch&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Create a branch by clicking on the branch drop-down and entering your branch name in the text field.&lt;/li&gt;
+&lt;li&gt;Any files you create, edit, or delete will then be applied to that branch.&lt;/li&gt;
+&lt;li&gt;Be careful; GitHub automatically puts you on master when you leave the repo and come back, so always make sure you&amp;rsquo;re on the right branch before you start working.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;creates-files-on-github:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Creates Files on Github&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You can create a new file directly in the web interface.&lt;/li&gt;
+&lt;li&gt;Once you&amp;rsquo;re done editing the file, &amp;ldquo;commit&amp;rdquo; the changes.&lt;/li&gt;
+&lt;li&gt;Make sure to include a commit message, and that you&amp;rsquo;ve chosen to commit to the branch you&amp;rsquo;ve already created.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;the-github-workflow-pull-requests:169fb08356674dcaeffc1219453a0d8a&#34;&gt;The Github Workflow: Pull Requests&lt;/h2&gt;
+
+&lt;h3 id=&#34;pull-requests:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Pull Requests&lt;/h3&gt;
+
+&lt;p&gt;In this section we&amp;rsquo;ll go over how to use Pull Requests. Pull Requests, or &amp;ldquo;PRs&amp;rdquo;, are one of the most important parts of the GitHub Flow.&lt;/p&gt;
+
+&lt;p&gt;A PR is a request to merge one branch into another. They&amp;rsquo;re used to discuss the changes made in the branch, and to continue to make changes until the branch is complete and the team agrees it can be merged. You&amp;rsquo;ll use PRs frequently when working with your team, as they&amp;rsquo;re the primary way to bring code on the master branch up to date with your feature branch once it&amp;rsquo;s ready for production.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-3:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pull Requests (or PRs) are used to add code to another branch, in this case master.&lt;/li&gt;
+&lt;li&gt;A Pull Request asks that the team merge one branch into another.&lt;/li&gt;
+&lt;li&gt;The &amp;ldquo;base&amp;rdquo; is the branch you want to merge into (often master), the &amp;ldquo;compare&amp;rdquo; is the branch you&amp;rsquo;re merging, in this case the feature branch.&lt;/li&gt;
+&lt;li&gt;Make sure to leave a comment to tell people what changes you made and why.&lt;/li&gt;
+&lt;li&gt;In the comment, you should put number sign (#) in front of the number of the issue that you&amp;rsquo;re fixing. This will automatically link your PR to that issue.&lt;/li&gt;
+&lt;li&gt;Once you&amp;rsquo;ve made the PR, the Files changed view allows you to see what this PR will change on the base branch. Red means &amp;ldquo;deleted&amp;rdquo;, green means &amp;ldquo;added&amp;rdquo;. This view is often called the &amp;ldquo;diff&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;You can add comments directly to the diff, or in the Conversations view.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;editing-pull-request-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Editing Pull Request Files&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You will be notified of all comments on your own PRs, unless you&amp;rsquo;ve unsubscribed from that PR or ignored the whole repository.&lt;/li&gt;
+&lt;li&gt;You can make changes to files directly in the Files changed view.&lt;/li&gt;
+&lt;li&gt;These changes, once committed, will be included in the PR.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;merging-pull-requests:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Merging Pull Requests&lt;/h3&gt;
+
+&lt;p&gt;At this point, your pull request should be approved and you are ready to merge it in to the master branch. When you merge your branch, you are taking the content and history from your feature branch and adding it to the content and history of the master branch.&lt;/p&gt;
+
+&lt;p&gt;Many project teams have established rules about who should merge a pull request. Some say it should be the person who created the pull request since they will be the ones to deal with any issues resulting from the merge. Others say it should be a single person within the project team to ensure consistency. Still others say it can be anyone other than the person who created the pull request. There are also third party Continuous Integration (CI) tools you can integrate with GitHub to test the build before the merge is completed.&lt;/p&gt;
+
+&lt;p&gt;There are pros and cons to each approach and we will not attempt to prescribe a solution here, but these are good conversations to have within your project team.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a look at how you can merge the pull request and close the original issue at the same time.&lt;/p&gt;
+
+&lt;h4 id=&#34;merging-pull-requests-1:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Merging Pull Requests&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;To merge your branch into the master branch, click the Merge pull request button in the Conversation view.&lt;/li&gt;
+&lt;li&gt;Use the keyword Fixes followed by # and the issue number to close the issue at the same time as you merge the PR.&lt;/li&gt;
+&lt;li&gt;A full list of keywords can be found here.&lt;/li&gt;
+&lt;li&gt;Once the PR is successfully merged, you can delete your feature branch as it is no longer needed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;setting-up-git:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Setting Up Git&lt;/h2&gt;
+
+&lt;h3 id=&#34;using-the-command-line:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Using the Command Line&lt;/h3&gt;
+
+&lt;p&gt;So far, all the work we&amp;rsquo;ve done has been using GitHub&amp;rsquo;s web interface. However, if you prefer to work on the command line, you can easily integrate GitHub into your current workflow.&lt;/p&gt;
+
+&lt;p&gt;In this section, we&amp;rsquo;ll teach you how to use Git and GitHub effectively through the command line. We assume a working knowledge of the command line interface, so if you&amp;rsquo;re rusty you might want to brush up on using the CLI before forging ahead.&lt;/p&gt;
+
+&lt;p&gt;To get to the command line, you should do the following:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac: Type command-space to bring up Spotlight search, then search for Terminal.&lt;/li&gt;
+&lt;li&gt;Linux: Open up your prefered shell, such as bash or fish.&lt;/li&gt;
+&lt;li&gt;Windows: We recommend that you download Git for Windows from GitHub, as it includes a bash emulator. Without it, the Windows CLI will look a lot different from the Mac / Linux CLI.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you&amp;rsquo;ve never used the command line before, you might want to learn more about it here.&lt;/p&gt;
+
+&lt;h3 id=&#34;git-vs-github:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Git vs. Github&lt;/h3&gt;
+
+&lt;p&gt;When using the command line, you&amp;rsquo;ll be working with Git. Git is the underlying version control system that GitHub makes use of. Some of the features we&amp;rsquo;ve discussed so far, such as pull request and issues, are functionality that GitHub adds. Others, like branching and commits, are Git functionality.&lt;/p&gt;
+
+&lt;p&gt;You can think of Git as a version control tool that you can use locally, and GitHub as a remote service that makes using that tool with other people on your team much more functional and seamless.&lt;/p&gt;
+
+&lt;h3 id=&#34;checking-git-version:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Checking Git Version&lt;/h3&gt;
+
+&lt;p&gt;Git is OS agnostic; the commands are essentially the same whether you are on Mac, Windows or Linux. You can use your favorite application to interact with the command line.&lt;/p&gt;
+
+&lt;p&gt;First, let&amp;rsquo;s check the version of Git currently installed on your system by typing &lt;code&gt;git --version&lt;/code&gt; into the command line. You should have the latest version of Git installed.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mac: 2.5.0&lt;/li&gt;
+&lt;li&gt;Linux: 2.5.0&lt;/li&gt;
+&lt;li&gt;Windows: 1.9.5&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t have the right version, or if you get an error saying Git isn&amp;rsquo;t installed, then go to git-scm.com to download and install the latest version.&lt;/p&gt;
+
+&lt;p&gt;Once you&amp;rsquo;ve verified you have the latest version of Git installed, you&amp;rsquo;re ready to move on to getting Git configured correctly.&lt;/p&gt;
+
+&lt;h3 id=&#34;git-configuration-levels:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Git Configuration Levels&lt;/h3&gt;
+
+&lt;p&gt;The first thing you should do when you get started using Git is to set your configuration options.&lt;/p&gt;
+
+&lt;p&gt;Git allows you to set configuration options at three different levels. The default value for Git config is &lt;code&gt;--local&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--system&lt;/code&gt; - These are system-wide configurations. They apply to all users on this computer.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--global&lt;/code&gt; - These are the user level configurations. They only apply to your user account.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--local&lt;/code&gt; - These are the repository level configurations. They only apply to the specific repository where they are set.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;pre-viewing-configuration-settings:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Pre-viewing Configuration Settings&lt;/h3&gt;
+
+&lt;p&gt;If you would like to see which config settings have already been added, you can type &lt;code&gt;git config --list&lt;/code&gt;. This will automatically read from each of the storage containers for config settings and list them.&lt;/p&gt;
+
+&lt;h3 id=&#34;configuring-user-name-and-email:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Configuring User Name and Email&lt;/h3&gt;
+
+&lt;p&gt;Go ahead and follow along as we set up our basic configurations. Git uses the config settings for your user name and email address to generate a unique fingerprint for each of the commits you create, so let&amp;rsquo;s set our user name and email address first.&lt;/p&gt;
+
+&lt;p&gt;Type git config &lt;code&gt;--global user.name &amp;quot;&amp;lt;your_full_name&amp;gt;&amp;quot;&lt;/code&gt; and type git config &lt;code&gt;--global user.email &amp;quot;&amp;lt;your_email&amp;gt;&amp;quot;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Make sure to use the same email address that&amp;rsquo;s associated with your GitHub account.&lt;/p&gt;
+
+&lt;h3 id=&#34;configuring-default-editor:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Configuring Default Editor&lt;/h3&gt;
+
+&lt;p&gt;Next, we will add a default text editor. This is the text editor Git will use when you need to edit things like commit messages or handle merge conflicts.&lt;/p&gt;
+
+&lt;p&gt;Typing git config &lt;code&gt;--global core.editor &amp;quot;atom --wait&amp;quot;&lt;/code&gt; will tell Git to use the open source atom text editor.&lt;/p&gt;
+
+&lt;h3 id=&#34;configuring-autocrlf-to-handle-whitespace:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Configuring Autocrlf to Handle Whitespace&lt;/h3&gt;
+
+&lt;p&gt;Different systems handle line endings and line breaks differently. If you open a file created on another system and do not have &lt;code&gt;autocrlf&lt;/code&gt; set, Git will think you made changes to the file based on the way your system handles this type of file.&lt;/p&gt;
+
+&lt;p&gt;Type &lt;code&gt;git config --global core.autocrlf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;If you are on a Windows machine, you will want to set this option to &lt;code&gt;true&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If you are on a Mac or Linux machine, you will set it to &lt;code&gt;input&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And for those wondering, &lt;code&gt;autocrlf&lt;/code&gt; stands for &amp;ldquo;auto carriage return line feed&amp;rdquo;.&lt;/p&gt;
+
+&lt;h3 id=&#34;configuring-default-push-behavior:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Configuring Default Push Behavior&lt;/h3&gt;
+
+&lt;p&gt;One final configuration option we will want to set is our default value for push.&lt;/p&gt;
+
+&lt;p&gt;When you push changes from your local computer to the remote you can choose whether you want Git to automatically push all of the local branches to their matching branches on the remote or whether you only want the currently checked out branch to be pushed.&lt;/p&gt;
+
+&lt;p&gt;The config setting we use to set this option is &lt;code&gt;push.default&lt;/code&gt;. We can set the default to &lt;code&gt;matching&lt;/code&gt; if we want to push all branches automatically. OR, we can set it to &lt;code&gt;simple&lt;/code&gt; if we only want to push the branch we are on.&lt;/p&gt;
+
+&lt;p&gt;For now, let&amp;rsquo;s use &lt;code&gt;git config --global push.default simple&lt;/code&gt;. This way you don&amp;rsquo;t make accidental pushes while you&amp;rsquo;re still learning to use Git.&lt;/p&gt;
+
+&lt;h3 id=&#34;viewing-configuration-settings:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Viewing Configuration Settings&lt;/h3&gt;
+
+&lt;p&gt;Now that we have made some changes to your configuration options, let&amp;rsquo;s take another look at &lt;code&gt;git config --list&lt;/code&gt;. You may notice duplicate settings if the same variable is set in multiple levels (such as &lt;code&gt;--global&lt;/code&gt; and &lt;code&gt;--local&lt;/code&gt;). The lowest value on the list takes precedence.&lt;/p&gt;
+
+&lt;h2 id=&#34;using-github-locally:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Using Github Locally&lt;/h2&gt;
+
+&lt;h3 id=&#34;cloning-a-repository:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Cloning a Repository&lt;/h3&gt;
+
+&lt;p&gt;Part of what makes git such a well-loved VCS is that it easily lets everyone on the team have their own local working repository. It&amp;rsquo;s expected that everyone will work on their own computer, and sync changes they&amp;rsquo;ve made with each other only when they need to.&lt;/p&gt;
+
+&lt;p&gt;But first, we have to make a local copy of your repository. To do this, we have to &amp;ldquo;clone&amp;rdquo; the repository that you have hosted on GitHub.&lt;/p&gt;
+
+&lt;p&gt;When you clone a GitHub repository you are creating a copy of everything in that repository, including its history. This is one of the benefits of a distributed VCS like git—rather than being required to query a slow centralized server to review the commit history, queries are run locally and are lightning fast.&lt;/p&gt;
+
+&lt;h4 id=&#34;cloning-a-repository-1:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Cloning a Repository&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Start a new branch on GitHub to work on.&lt;/li&gt;
+&lt;li&gt;Copy the clone URL on GitHub.&lt;/li&gt;
+&lt;li&gt;Using the command line, &lt;code&gt;cd&lt;/code&gt; to the directory that you want to put your local repo in.
+*Type &lt;code&gt;git clone &amp;lt;clone_url&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;You might be prompted for your password. You should enter your GitHub password at this point.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cd&lt;/code&gt; into the new cloned repo and type git status.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git branch&lt;/code&gt; will show you the available branches. Only master appears.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git branch -a&lt;/code&gt; will show all the remote branches.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git checkout &amp;lt;branchname&amp;gt;&lt;/code&gt; will create a local branch that matches the remote branch. All edits you make locally with be applied to that branch until you checkout another one.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;editing-local-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Editing Local Files&lt;/h3&gt;
+
+&lt;p&gt;Now that you have cloned the repository and checked out your branch, you are ready to make some changes to the local files. If you are familiar with using the command line to open and edit files, then much of this will be familiar to you. The only difference here is that we will be making our changes on a branch. Let&amp;rsquo;s add more information to the bio we created earlier.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-4:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git branch&lt;/code&gt; to make sure you&amp;rsquo;re on the right branch.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cd&lt;/code&gt; to the proper directory, then open the file with your text editor.&lt;/li&gt;
+&lt;li&gt;Make the changes, then save them.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;the-two-stage-commit:169fb08356674dcaeffc1219453a0d8a&#34;&gt;The Two Stage Commit&lt;/h3&gt;
+
+&lt;p&gt;After you have finished making your changes, it is time to commit them. When working from the command line, you will need to be familiar with the idea of the two stage commit.&lt;/p&gt;
+
+&lt;p&gt;When you work locally, your files exist in one of four states. They are either untracked, modified, staged, or committed.&lt;/p&gt;
+
+&lt;p&gt;An untracked file is one that is not currently part of the version controlled directory—such as any new files or files whose names have been changed.&lt;/p&gt;
+
+&lt;p&gt;Modified files are any files that you have edited and saved since the last time you committed.&lt;/p&gt;
+
+&lt;p&gt;Untracked and modified files exist in your working directory.&lt;/p&gt;
+
+&lt;p&gt;To add these files to version control, you will create a collection of files that represent a discrete unit of work. This way if you want to revert something in the future, it&amp;rsquo;s easier to find and revert only the mistaken changes.&lt;/p&gt;
+
+&lt;p&gt;We build this unit of work in the staging area.&lt;/p&gt;
+
+&lt;p&gt;To add files to staging, you use the &lt;code&gt;git add &amp;lt;filename&amp;gt;&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;p&gt;Staging is important because it lets you only stage some of your new or modified files. For instance, if you&amp;rsquo;ve added a new variable and fixed a typo, you might want to commit those two changes separately. To do this, you stage and commit each one separately.&lt;/p&gt;
+
+&lt;p&gt;When we are satisfied with the unit of work we have assembled, we will commit everything in the staging area.&lt;/p&gt;
+
+&lt;p&gt;To commit files, use the &lt;code&gt;git&lt;/code&gt; commit command.&lt;/p&gt;
+
+&lt;p&gt;Once changes are committed, the changes are added to the history of that branch, so that you can later see those specific changes, and even undo them if need be.&lt;/p&gt;
+
+&lt;p&gt;To review:&lt;/p&gt;
+
+&lt;p&gt;In order to make a file part of the version controlled directory we will first do a git add of only those files we want to commit together, and then we will do a git commit to add those changes to the Git version control history. Once the changes are commited, you&amp;rsquo;ll always have a record of them in that state, even after you&amp;rsquo;ve changed them again in the working directory.&lt;/p&gt;
+
+&lt;p&gt;All of this happens locally, on your computer.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s do it now.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-5:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git status&lt;/code&gt; lets you see which files have been changed since the last commit.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git add &amp;lt;filename&amp;gt;&lt;/code&gt; adds that file to the staging area.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git add .&lt;/code&gt; adds all the changed and untracked files to staging.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git commit&lt;/code&gt; will submit all those file changes under one unit of work.&lt;/li&gt;
+&lt;li&gt;This also opens your default text editor (as set earlier in this lesson) for you to add a commit message.&lt;/li&gt;
+&lt;li&gt;This commit will happen locally, and only on the checked out branch. If you check out another branch, the changes will no longer show in that file.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;pushing-changes:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Pushing changes&lt;/h3&gt;
+
+&lt;p&gt;Now that you&amp;rsquo;ve committed files locally, it&amp;rsquo;s time to make sure that your remote repository also reflects those changes. So we&amp;rsquo;ll &amp;ldquo;&amp;lsquo;push&amp;rdquo;&amp;rsquo; the files and version history up to GitHub.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-6:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Check &lt;code&gt;git status&lt;/code&gt;: the working directory needs to be clean. If it&amp;rsquo;s not, make sure there isn&amp;rsquo;t anything that you meant to commit!&lt;/li&gt;
+&lt;li&gt;Do &lt;code&gt;git push&lt;/code&gt;: assuming you set the default push behavior to simple, this will push your changes to the same branch on the remote system.&lt;/li&gt;
+&lt;li&gt;Back in GitHub, you can easily start a new pull request to merge the changes into &lt;code&gt;master&lt;/code&gt; using the same process you learned earlier.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;the-workflow-end-to-end:169fb08356674dcaeffc1219453a0d8a&#34;&gt;The Workflow End-to-End&lt;/h2&gt;
+
+&lt;h3 id=&#34;updating-our-workflow:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Updating Our Workflow&lt;/h3&gt;
+
+&lt;p&gt;So far you&amp;rsquo;ve learned the most-used Git commands.&lt;/p&gt;
+
+&lt;p&gt;In this section, we&amp;rsquo;ll show you how to do certain things locally instead of on GitHub, as well as some shortcuts to make you even faster when using the command line.&lt;/p&gt;
+
+&lt;h3 id=&#34;options-for-creating-a-repository:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Options for Creating a Repository&lt;/h3&gt;
+
+&lt;p&gt;All of the work we do in Git and GitHub happens inside of a repository. There are two ways to get started working with a new repository. You can:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Clone the repository from a remote.&lt;/li&gt;
+&lt;li&gt;Initialize Git in an existing local directory.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Since this class is designed to teach you how to use Git and GitHub effectively, we will focus on how to structure our work to support collaboration.&lt;/p&gt;
+
+&lt;p&gt;If I want to collaborate with you on a project then I will start a repository on GitHub. Let&amp;rsquo;s discuss some best practices for GitHub repositories now.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-7:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use the green New button on the Repositories tab of your GitHub profile page.&lt;/li&gt;
+&lt;li&gt;The name of your repository must be unique to your account.&lt;/li&gt;
+&lt;li&gt;Choose whether your repo will be public or private.&lt;/li&gt;
+&lt;li&gt;Anyone can can view, clone, or fork a public repo, but only collaborators can push changes to it.&lt;/li&gt;
+&lt;li&gt;Private repositories can only be viewed, cloned, etc. by collaborators you have added.&lt;/li&gt;
+&lt;li&gt;You are allowed an unlimited number of public repos on your account, but must have a paid account to have any private repositories.&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;.gitignore&lt;/code&gt; file tells git which types of files it shouldn&amp;rsquo;t bother tracking. GitHub allows you to auto-generate your &lt;code&gt;.gitignore&lt;/code&gt; file.&lt;/li&gt;
+&lt;li&gt;You should add an open source license to your repository if you&amp;rsquo;d like to make it open source.&lt;/li&gt;
+&lt;li&gt;Once you&amp;rsquo;ve created your repo, you can add collaborators by searching for their GitHub user name in the &lt;code&gt;Collaborators&lt;/code&gt; section of the repo.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;creating-branches:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Creating Branches&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git branch&lt;/code&gt; shows which branch you&amp;rsquo;re on locally, and which other local branches exist.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git branch &amp;lt;new_branchname&amp;gt;&lt;/code&gt; creates a new local branch.&lt;/li&gt;
+&lt;li&gt;You still must check out this new branch to edit it. &lt;code&gt;git checkout &amp;lt;new_branchname&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;workflow-review:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Workflow Review&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git add .&lt;/code&gt; adds all modified or new files to be committed, so you don&amp;rsquo;t have to write out each file.&lt;/li&gt;
+&lt;li&gt;You can write your commit message along with your commit command using the syntax: &lt;code&gt;git commit -m &amp;quot;&amp;lt;commit_message&amp;gt;&amp;quot;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;You should then push your changes up to GitHub. &lt;code&gt;git push -u origin &amp;lt;branch_name&amp;gt;&lt;/code&gt; will push your local branch changes to a branch with the same name on GitHub, as well as set a setting such that in the future, &lt;code&gt;git push&lt;/code&gt; alone will complete the same command.&lt;/li&gt;
+&lt;li&gt;Once this is finished, you must create a pull request on GitHub, and merge it on GitHub once it&amp;rsquo;s completed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;pulling-changes-from-the-remote:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Pulling Changes from the Remote&lt;/h3&gt;
+
+&lt;p&gt;Before we can go on, we will need to update our local copy of the file.&lt;/p&gt;
+
+&lt;p&gt;We use push to send our changes to the remote, but we use pull to retrieve changes from the remote. When we pull the files from the remote, Git downloads a copy of the new commits that have been added to the branch since our last pull and then attempts to merge them into our local branch.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-8:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;When the remote repository has been changed (such as after someone else&amp;rsquo;s pull request is merged), your local repository will not be updated until you choose for it to be.&lt;/li&gt;
+&lt;li&gt;The command &lt;code&gt;git pull&lt;/code&gt; will make your local working branch up to date with the remote version of that same branch.&lt;/li&gt;
+&lt;li&gt;This will not delete local branches that have been deleted on the remote repo.&lt;/li&gt;
+&lt;li&gt;To delete local branches that do not have a remote counterpart, use the &lt;code&gt;git branch --merged&lt;/code&gt; command to list all such local branches, and then &lt;code&gt;git branch -d &amp;lt;branchname&amp;gt;&lt;/code&gt; to delete specific local branches.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;working-local-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Working Local Files&lt;/h2&gt;
+
+&lt;h3 id=&#34;modifying-local-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Modifying Local Files&lt;/h3&gt;
+
+&lt;p&gt;Now that you understand the foundations of Git, and how Git and GitHub work together, we&amp;rsquo;re going to do a deep-dive into using Git while you edit your local files.&lt;/p&gt;
+
+&lt;h4 id=&#34;summary-9:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Summary&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;There is only one working and one staging area, so you can create a branch after you&amp;rsquo;ve changed or added a file, and still commit that file to the new branch.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git checkout -b &amp;quot;&amp;lt;new_branchname&amp;gt;&amp;quot;&lt;/code&gt; is a quick way to both create a new branch and check it out.&lt;/li&gt;
+&lt;li&gt;If you edit a file after git adding it, then when you commit only the changes made before the &lt;code&gt;git add&lt;/code&gt; will actually be commited. You must &lt;code&gt;git add&lt;/code&gt;` it again in order to commit all the changes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;comparing-local-file-states:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Comparing Local File States&lt;/h3&gt;
+
+&lt;p&gt;In the last section, we made several changes to a local file, causing the file to appear in different stages of the commit process. The &lt;code&gt;git diff&lt;/code&gt; command allows us to see what has changed in these different versions of our files. Let&amp;rsquo;s explore some of these options now.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git diff&lt;/code&gt; allows you to compare different versions of a file against each other.&lt;/li&gt;
+&lt;li&gt;On its own, &lt;code&gt;git diff&lt;/code&gt; compares the working directory to the staged version of the file.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git diff --staged&lt;/code&gt; compares the staged version to the most recent commited version.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git diff HEAD&lt;/code&gt; combines the changes in your working and staged versions of the file, and compares them to the version of the file designated as HEAD (most often, the most recent commit).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git diff --color-words&lt;/code&gt; displays a word-by-word comparision rather than a line-by-line comparison, helpful for small changes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;what-happens-when-we-mege:169fb08356674dcaeffc1219453a0d8a&#34;&gt;What Happens When We Mege ?&lt;/h3&gt;
+
+&lt;p&gt;Merging combines the history of two or more branches.&lt;/p&gt;
+
+&lt;p&gt;We have already learned how to merge our changes on GitHub using the pull request process, now let&amp;rsquo;s learn how to merge our changes locally.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;When performing a merge, you need to have checked out the branch you are merging into.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git merge &amp;lt;branchname_to_merge&amp;gt;&lt;/code&gt; will merge the branch locally.&lt;/li&gt;
+&lt;li&gt;To send the merge to the remote, simply &lt;code&gt;git push&lt;/code&gt;. If you already have a PR for that branch open on GitHub, this will automatically close that PR.&lt;/li&gt;
+&lt;li&gt;You must still delete the branch separately on GitHub (in the PR window) and locally (using &lt;code&gt;git branch -d &amp;lt;branchname&amp;gt;&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;viewing-project-history:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Viewing Project History&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git pull&lt;/code&gt; updates the local directory to include all the changes made to the remote directory, even those done by other people.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log&lt;/code&gt; provides a list of all of the commits on the current branch, with the most recent commit first.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Up&lt;/code&gt; and &lt;code&gt;down&lt;/code&gt; arrows navigate, &lt;code&gt;enter&lt;/code&gt; cycles through log entries, and q quits log viewing screen.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --oneline&lt;/code&gt; shows a smaller version of the log.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --oneline --graph&lt;/code&gt; shows a graph of the changes along with the one-line log.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --oneline --graph --decorate&lt;/code&gt; includes information about the branches and the head.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --oneline --graph --decorate --all&lt;/code&gt; also includes unmerged branches.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --stat&lt;/code&gt; tells you which files were included in each commit.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git log --patch&lt;/code&gt; shows the actual changes that were made in each commit as diffs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;fixing-common-issues-with-git:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Fixing Common Issues with Git&lt;/h2&gt;
+
+&lt;h3 id=&#34;using-git-to-fix-mistakes:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Using Git to Fix Mistakes&lt;/h3&gt;
+
+&lt;p&gt;One of the most powerful features of any VCS is the ability to undo your changes long after you save them.&lt;/p&gt;
+
+&lt;p&gt;Git offers all of the functionality that you&amp;rsquo;d expect from a full fledged VCS. In this section, we&amp;rsquo;ll walk you through using Git on your computer to undo any changes you&amp;rsquo;ve already made with Git.&lt;/p&gt;
+
+&lt;h3 id=&#34;creating-a-repository-the-command-line:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Creating a Repository the Command Line&lt;/h3&gt;
+
+&lt;p&gt;You&amp;rsquo;ll only be working locally for this section, so you won&amp;rsquo;t need to interact with GitHub. Thus, it&amp;rsquo;s a good chance to learn how to use Git on the command line to create a new local repo.&lt;/p&gt;
+
+&lt;p&gt;On the next slide you&amp;rsquo;ll learn how to use &lt;code&gt;git init&lt;/code&gt; to create a local repository, and then we&amp;rsquo;ll use that repo in the rest of this lesson.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;To create a project from scratch, type &lt;code&gt;git init &amp;lt;directoryname&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;This creates the directory as a subdirectory of the current location, and initializes a repo there.&lt;/li&gt;
+&lt;li&gt;You will have to create your &lt;code&gt;README.md&lt;/code&gt; file manually.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;handling-merge-conflicts:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Handling Merge Conflicts&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;When you have a merge conflict, type &lt;code&gt;git status&lt;/code&gt; and look for &amp;ldquo;unmerged paths&amp;rdquo; to see which files are creating the merge conflict.&lt;/li&gt;
+&lt;li&gt;Open the file in your text editor. You will see some lines that look like the following:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEAD
+Some text here.
+========
+Different text here.
+&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; merge-me
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The text above and below the equal signs are what is causing the merge conflict. They appear on the same line but are different text.&lt;/li&gt;
+&lt;li&gt;Decide how you want to resolve the conflict, and once that&amp;rsquo;s completed delete the merge markers. Save and close your text editor.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git status&lt;/code&gt; will show that the files are no longer in conflict, but that you are in the middle of a merge. &lt;code&gt;git add&lt;/code&gt; the file and then &lt;code&gt;git commit&lt;/code&gt; it, and the merge will then automatically complete.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;renaming-and-moving-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Renaming and Moving Files&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;When moving files, use the command &lt;code&gt;git mv&lt;/code&gt; rather than just the &lt;code&gt;mv&lt;/code&gt; command.&lt;/li&gt;
+&lt;li&gt;The syntax for this is &lt;code&gt;git mv &amp;lt;filename&amp;gt; &amp;lt;new_directory&amp;gt;/&amp;lt;filename&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git mv&lt;/code&gt; automatically adds the file to the staging area after it is moved, so it can be commited right away.&lt;/li&gt;
+&lt;li&gt;Just as with &lt;code&gt;mv&lt;/code&gt;, you can use &lt;code&gt;git mv&lt;/code&gt; to rename a file like so:&lt;code&gt;git mv &amp;lt;filename&amp;gt; &amp;lt;new_filename&amp;gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;reverting-commits:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Reverting Commits&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;When reverting, you revert a specific commit.&lt;/li&gt;
+&lt;li&gt;Find that commit, and copy the first several characters of the SHA-1 hash.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git revert &amp;lt;commit_hash&amp;gt;&lt;/code&gt; will create a new commit that is the exact opposite of the commit you&amp;rsquo;re reverting.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;fixing-bad-commits:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Fixing Bad Commits&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The command &lt;code&gt;git commit --amend&lt;/code&gt; will add whatever is in your staging area to your last commit, and allow you to edit that commit message.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;unstaging-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Unstaging Files&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git reset HEAD &amp;lt;filename&amp;gt;&lt;/code&gt; will remove a file from the staging area, putting it back in your working directory.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;git-reset:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Git Reset&lt;/h3&gt;
+
+&lt;p&gt;Sometimes we are working on a branch and we decide things aren&amp;rsquo;t going quite like we had planned. We want to reset some, or even all, of our files to look like what they were at a different point in history. We can do that with &lt;code&gt;git reset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Remember that there are three different snapshots of our project at any given time. The first is the most recent commit. The second is the staging area (also called the index). The third is the working directory (i.e. whatever you currently have saved on disk). The &lt;code&gt;git reset&lt;/code&gt; command has three modes, and they allow us to change some or all of these three snapshots.&lt;/p&gt;
+
+&lt;p&gt;It also helps to know what branches technically are: each is a pointer, or reference, to the latest commit in a line of work. As we add new commits, the currently checked-out branch &amp;ldquo;moves forward,&amp;rdquo; so that it always points to the most recent commit.&lt;/p&gt;
+
+&lt;h3 id=&#34;git-reset-modes:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Git Reset Modes&lt;/h3&gt;
+
+&lt;p&gt;The three modes for git reset are: &lt;code&gt;--soft&lt;/code&gt;, &lt;code&gt;--mixed&lt;/code&gt;, and &lt;code&gt;--hard&lt;/code&gt;. For these examples, assume that we have a &amp;ldquo;clean&amp;rdquo; working directory, i.e. there are no uncommited changes.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git reset --soft &amp;lt;my-branch&amp;gt; &amp;lt;other-commit&amp;gt;&lt;/code&gt; moves &lt;code&gt;&amp;lt;my-branch&amp;gt;&lt;/code&gt; to point at &lt;code&gt;&amp;lt;other-commit&amp;gt;&lt;/code&gt;. However, the working directory and staging area remain untouched. Since the snapshot that &lt;code&gt;&amp;lt;my-branch&amp;gt;&lt;/code&gt; points to now differs from the index&amp;rsquo;s snapshot, this command effectively stages all differences between those snapshots. This is a good command to use when you have made a large number of small commits and you would like to regroup them into a single commit.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;With the &lt;code&gt;--mixed&lt;/code&gt; option, Git makes &lt;code&gt;&amp;lt;my-branch&amp;gt;&lt;/code&gt; and the staging area look like the &lt;code&gt;&amp;lt;other-commit&amp;gt;&lt;/code&gt; snapshot. This is the default mode: if you don&amp;rsquo;t include a mode flag, Git will assume you want &lt;code&gt;--mixed&lt;/code&gt;. &lt;code&gt;--mixed&lt;/code&gt; is useful if you want to keep all of your changes in the working directory, but change whether and how you commit those changes.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;--hard&lt;/code&gt; is the most drastic option. With this, Git will now make all 3 snapshots &amp;ndash; , the staging area, and your working directory &amp;ndash; look like they did at &lt;code&gt;&amp;lt;other-commit&amp;gt;&lt;/code&gt;. This can be dangerous! We&amp;rsquo;ve assumed so far that our working directory is clean. If it is not, and you have uncommited changes, git reset &amp;ndash;hard will delete all of those changes. Even with a clean working directory, use &lt;code&gt;--hard&lt;/code&gt; only if you&amp;rsquo;re sure you want to completely undo earlier changes.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git revert&lt;/code&gt; reverts a specific commit. &lt;code&gt;git reset&lt;/code&gt; resets git to a specific commit.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git reset --soft &amp;lt;to_commit&amp;gt;&lt;/code&gt; resets git to a specific commit, and puts the commits you&amp;rsquo;re resetting into the staging area where they can be easily re-committed.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git reset --mixed &amp;lt;to_commit&amp;gt;&lt;/code&gt; resets git to a specific commit, and puts the commits you&amp;rsquo;re resetting into the working directory so you can edit them directly.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git reset --hard &amp;lt;to_commit&amp;gt;&lt;/code&gt; resets git to a specific commit, and deletes the commits you&amp;rsquo;re resetting.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Just like with &lt;code&gt;git revert&lt;/code&gt; you can use the commit ID, or you can use the syntax &lt;code&gt;HEAD~&amp;lt;number&amp;gt;&lt;/code&gt;. The number you put will be the number of commits backwards from the current &lt;code&gt;HEAD&lt;/code&gt; that git will move the new &lt;code&gt;HEAD&lt;/code&gt; to.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can always use &lt;code&gt;git log&lt;/code&gt; to see all your previous history to know where to reset to.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;discarding-changes-in-modified-files:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Discarding Changes in Modified Files&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You can remove changes in the working directory using &lt;code&gt;git checkout&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;This is destructive! You will throw away the changes and not be able to get them back.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git checkout --&amp;lt;filename&amp;gt;&lt;/code&gt; is the syntax. The &lt;code&gt;--&lt;/code&gt; lets Git know you&amp;rsquo;re talking about a file. This will revert the file to the version found in the last commit.&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This only works for files in the working directory. Files in the staging area or already commited won&amp;rsquo;t be reverted.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Just as &lt;code&gt;git mv&lt;/code&gt; exists to move or rename a file and instantly add the change to the staging area, &lt;code&gt;git rm&lt;/code&gt; exists to remove a file.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;git rm &amp;lt;filename&amp;gt;&lt;/code&gt; will remove the file and add the change to the staging area.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;creating-shortcuts:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Creating Shortcuts&lt;/h2&gt;
+
+&lt;h3 id=&#34;creating-command-shortcuts:169fb08356674dcaeffc1219453a0d8a&#34;&gt;Creating Command Shortcuts&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;You can create aliases in git that let you call on the short alias instead of writing out a full long command.&lt;/li&gt;
+&lt;li&gt;You do this by setting a global alias using &lt;code&gt;git config&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git config --global alias.lol &amp;quot;log --oneline --graph --decorate --all&amp;quot;&lt;/code&gt; would let you type git lol instead of the entire log command with all its options.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git config --global alias.co &amp;quot;commit -m&amp;quot;&lt;/code&gt; would let you write &lt;code&gt;git co &amp;quot;Commit Message&amp;quot;&lt;/code&gt; to quickly commit with a message attached&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
       <title>about</title>
-      <link>http://localhost:1313/hugo-boilerplate/about/</link>
+      <link>http://localhost:1313/notebook/about/</link>
       <pubDate>Sun, 15 Nov 2015 19:32:14 +0100</pubDate>
       
-      <guid>http://localhost:1313/hugo-boilerplate/about/</guid>
+      <guid>http://localhost:1313/notebook/about/</guid>
       <description>
 
 &lt;h2 id=&#34;a-headline:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;A Headline&lt;/h2&gt;
