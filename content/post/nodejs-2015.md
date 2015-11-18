@@ -1,20 +1,19 @@
 +++
 categories = ["Programming", "Javascript"]
-date = "2015-11-18T21:20:43+01:00"
+date = "2015-11-18"
 description = ""
 draft = true
 image = "/img/about-bg.jpg"
 tags = ["nodejs", "programming", "javascript", "es6", "es7"]
-title = "nodejs 2015 (es6 and es7 features"
+title = "nodejs 2015 (es6 and es7 features)"
 
 +++
 
 
 # Nodejs
 
-## ES6 features
+# ES6 features
 
-# ECMAScript 6 <sup>[git.io/es6features](http://git.io/es6features)</sup>
 
 ## Introduction
 ECMAScript 6, also known as ECMAScript 2015, is the latest version of the ECMAScript standard.  ES6 is a significant update to the language, and the first update to the language since ES5 was standardized in 2009. Implementation of these features in major JavaScript engines is [underway now](http://kangax.github.io/es5-compat-table/es6/).
@@ -597,6 +596,10 @@ function factorial(n, acc = 1) {
 factorial(100000)
 ```
 
+# ES7 Features
+
+## Introduction
+
 ECMAScript 7 is the next evolution of the ECMA-262 standard, this is at a very early stage, you may want to checkout [paws-on-es6](https://github.com/hemanth/paws-on-es6) and [jsfeatures.in](http://jsfeatures.in) as well.
 
 __List of ES7 features:__
@@ -928,4 +931,4 @@ getPlayers()
 # References
 
 [ES6 features](https://github.com/lukehoban/es6features)
-[ES7 features]https://github.com/hemanth/es7-features)
+[ES7 features](https://github.com/hemanth/es7-features)
