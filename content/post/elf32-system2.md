@@ -5,11 +5,11 @@ description = ""
 draft = true
 image = "/img/about-bg.jpg"
 tags = ["programming", "hacking", "scripting", "development"]
-title = "RootMe Challenge: elf32 system 2"
+title = "RootMe Challenge: ELF32 System 2"
 
 +++
 
-# ELF 32 - System 2 : SUID Vulnerabilty
+# ELF32 - System 2 : SUID Vulnerabilty
 
 # Resources
 
@@ -24,7 +24,7 @@ Such a script must start with a line like:
 The script is called `executable' because just like a real (binary) executable it starts with a so-called `magic number' indicating the type of the executable.  In our case this number is `#!' and the OS takes the rest of the first line as the interpreter for the script, possibly followed by 1 initial option like:
 ```
 #!/bin/sed -f
-````
+```
 
 Suppose this script is called `foo' and is found in /bin, then if you type:
 ```
@@ -65,7 +65,7 @@ $ -i
 We know the last command will be rearranged to:
 ```
 /bin/sh -i
-
+```
 But this command will give us an interactive shell, setuid to the owner of the script!
 Fortunately this security hole can easily be closed by making the first line:
 ```
