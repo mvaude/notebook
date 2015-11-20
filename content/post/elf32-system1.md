@@ -5,17 +5,15 @@ description = ""
 draft = true
 image = "/img/about-bg.jpg"
 tags = ["programming", "rootme", "challenges", "hack", "crack"]
-title = "RootMe Challenges"
+title = "RootMe Challenge: ELF32 System I"
 
 +++
 
-# App Script
+# ELF32 - System 1 - SUID scripts vulnerabilities
 
-## ELF32 - System 1 - SUID scripts vulnerabilities
+# Resources
 
-## Resources
-
-* ### [Danger of SUID Shell Scripts](http://repository.root-me.org/Administration/Unix/EN%20-%20Dangers%20of%20SUID%20Shell%20Scripts.pdf)
+## [Danger of SUID Shell Scripts](http://repository.root-me.org/Administration/Unix/EN%20-%20Dangers%20of%20SUID%20Shell%20Scripts.pdf)
 
 ## 1. Never use C-shell for SUID scipts
 
@@ -68,6 +66,7 @@ isroot='/usr/bin/grep -c root /tmp/.user'
 ```
 
 - Hack:
+
 If the user runs the program and doesn't specify an argument, the program will run the passwd command without any arguments. It default so to the current user, the problem is that in a root-owned SUID script, the current user is always root.
 
 - Script:
@@ -85,6 +84,7 @@ isroot='/usr/bin/grep -c root /tmp/.user'
 ```
 
 - Hack:
+
 A hacker could write a program that will automatically watch for activity and replace the /tmp/.user file between the ```rm``` and ```echo``` by an empty one. It could not be overwritten and so run as root.
 
 ## 4. Don't use temporary files, don't put them in a publicity writable area
@@ -158,4 +158,6 @@ There are the more secure options (even more):
   - a program like sudo
 
 
-* ### [SUID Privileged Programs](http://repository.root-me.org/Administration/Unix/EN%20-%20SUID%20Privileged%20Programs.pdf)
+## [SUID Privileged Programs](http://repository.root-me.org/Administration/Unix/EN%20-%20SUID%20Privileged%20Programs.pdf)
+
+## 1. 
