@@ -15,7 +15,7 @@ title = "RootMe Challenge: ELF32 System 2"
 
 ## [How can I get setuid shell scripts to work ?](http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html)
 
-Let us first assume you are on a UNIX variant (e.g. 4.3BSD or SunOS) that knows about so-called `executable shell scripts'.
+Let us first assume you are on a UNIX variant (e.g. 4.3BSD or SunOS) that knows about so-called ```executable shell scripts```.
 Such a script must start with a line like:
 ```
 #!/bin/sh
