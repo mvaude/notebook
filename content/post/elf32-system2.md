@@ -87,13 +87,17 @@ The third command will be rearranged to:
 nice -20 /bin/sh - temp
 ```
 As this command runs so slowly, the fourth command might be able to replace the original ```temp``` with ```my_script``` BEFORE ```temp``` is opened by the shell!  There are 4 ways to fix this security hole:
+
   1. let the OS start setuid scripts in a different, secure way
-    - System V R4 and 4.4BSD use the /dev/fd driver to pass the interpreter a file descriptor for the script
+    * System V R4 and 4.4BSD use the /dev/fd driver to pass the interpreter a file descriptor for the script
+
   2. let the script be interpreted indirectly, through a frontend that makes sure everything is all right before starting the real interpreter - if you use the ```indir``` program from comp.sources.unix the setuid script will look like this:
+
 ```
 #!/bin/indir -u
 #?/bin/sh /etc/setuid_script
 ```
+
   3. make a ```binary wrapper```: a real executable that is setuid and whose only task is to execute the interpreter with the name of the script as an argument.
 
   4. make a general ```setuid script server``` that tries to locate the requested ```service``` in a database of valid scripts and upon success will start the right interpreter with the right arguments.
