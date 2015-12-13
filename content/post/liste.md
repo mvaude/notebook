@@ -18,6 +18,7 @@ title = "Christmas Ideas"
 ### Accessories
 
 * [Hard Drive WD Blue 3 To](http://www.materiel.net/disque-dur-interne-3-5-pouces/western-digital-wd-blue-3-5-sata-iii-6-gb-s-3-to-122374.html)
+* [Hard Drive Dock station](http://www.materiel.net/dock-pour-disque-dur/advance-dual-easy-docking-bx-d3002u3-101807.html)
 
 ---
 
