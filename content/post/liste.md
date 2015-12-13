@@ -11,11 +11,15 @@ title = "Christmas Ideas"
 
 # Christmas ideas
 
+---
+
 ## Computer
 
 ### Accessories
 
 * [Hard Drive WD Blue 3 To](http://www.materiel.net/disque-dur-interne-3-5-pouces/western-digital-wd-blue-3-5-sata-iii-6-gb-s-3-to-122374.html)
+
+---
 
 ## Tablets
 
