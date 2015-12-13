@@ -33,4 +33,3 @@ title = "Christmas Ideas"
 
 ### Accessories
 
-* [Pixel Keyboard](https://store.google.com/product/pixel_c_keyboard)
