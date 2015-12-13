@@ -11,10 +11,18 @@ title = "Christmas Ideas"
 
 # Christmas ideas
 
+## Computer Accessories
+
 * [Steam Game Controller](http://store.steampowered.com/app/353370/)
+
+![alt text](http://cdn.akamai.steamstatic.com/steam/apps/353370/ss_d2f5e7325666df6119ff1d42be73bac9594c5b1e.600x338.jpg?t=1449185630)
+
 * [Hard Drive WD Blue 3 To](http://www.materiel.net/disque-dur-interne-3-5-pouces/western-digital-wd-blue-3-5-sata-iii-6-gb-s-3-to-122374.html)
 
-* [Tablet Pixel C](https://store.google.com/product/pixel_c)
-OR
-* [Tablet Nvidia Shield](http://shield.nvidia.com/store/tablet/k1)
+![alt text](http://www.bhphotovideo.com/images/images2500x2500/wd_wd30ezrz_3tb_blue_3_5_hard_1196557.jpg)
 
+## Tablets
+
+* [Tablet Pixel C](https://store.google.com/product/pixel_c)
+
+![alt text](http://s9.postimg.org/n6ecsbj3j/Google_Pixel_C_Android_Tablet_with_Keyboard.jpg)
