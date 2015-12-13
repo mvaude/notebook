@@ -17,8 +17,6 @@ title = "Christmas Ideas"
 
 * [Hard Drive WD Blue 3 To](http://www.materiel.net/disque-dur-interne-3-5-pouces/western-digital-wd-blue-3-5-sata-iii-6-gb-s-3-to-122374.html)
 
-![alt text](http://www.bhphotovideo.com/images/images2500x2500/wd_wd30ezrz_3tb_blue_3_5_hard_1196557.jpg)
-
 ## Tablets
 
 * [Tablet Pixel C](https://store.google.com/product/pixel_c)
