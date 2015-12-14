@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>RootMe Challenge: ELF32 System 2 -- Notebook</title>
+
+    
+
+    
+    <link href="https://mvaude.github.io/notebook/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link href="https://mvaude.github.io/notebook/css/clean-blog.min.css" rel="stylesheet">
+
+    
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+
+</head>
+
+<body>
+
+    
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="https://mvaude.github.io/notebook/">Notebook</a>
+            </div>
+
+                       
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/">home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/post/">Archives</a>
+                    </li>
+                    
+                  </ul>
+            </div>
+           
+
+        </div>
+        
+    </nav>
+
+
+    
+    
+    <header class="intro-header" style="background-image: url('https://mvaude.github.io/notebook//img/about-bg.jpg')">
+      
+      <div class="container">
+        <div class="row">
+           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+             <div class="post-heading">
+               <h1>RootMe Challenge: ELF32 System 2</h1>
+               <h2 class="subheading"></h2>
+               <span class="meta">Posted by <a href="#">Maxime Vaude</a> on Sun, Nov 22, 201127
+                 <br />
+                 In <a href="https://mvaude.github.io/notebook/categories/development" >Development</a>, <a href="https://mvaude.github.io/notebook/categories/programming" >Programming</a>, 
+
+                 <br />
+                 Tags <a href="https://mvaude.github.io/notebook/tags/programming" >programming</a> <a href="https://mvaude.github.io/notebook/tags/hacking" >hacking</a> <a href="https://mvaude.github.io/notebook/tags/scripting" >scripting</a> <a href="https://mvaude.github.io/notebook/tags/development" >development</a> 
+
+               </span>
+             </div>
+           </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  
+
+<h1 id="elf32-system-2-suid-vulnerabilty:800705b61f4e46482fbbca295d42dc7d">ELF32 - System 2 : SUID Vulnerabilty</h1>
+
+<h1 id="resources:800705b61f4e46482fbbca295d42dc7d">Resources</h1>
+
+<h2 id="how-can-i-get-setuid-shell-scripts-to-work-http-www-faqs-org-faqs-unix-faq-faq-part4-section-7-html:800705b61f4e46482fbbca295d42dc7d"><a href="http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html">How can I get setuid shell scripts to work ?</a></h2>
+
+<p>Let us first assume you are on a UNIX variant (e.g. 4.3BSD or SunOS) that knows about so-called <code>executable shell scripts</code>.
+Such a script must start with a line like:</p>
+
+<pre><code>#!/bin/sh
+</code></pre>
+
+<p>The script is called <code>executable</code><code>because just like a real (binary) executable it starts with a so-called</code><code>magic number</code><code>indicating the type of the executable.  In our case this number is</code><code>#!</code>` and the OS takes the rest of the first line as the interpreter for the script, possibly followed by 1 initial option like:</p>
+
+<pre><code>#!/bin/sed -f
+</code></pre>
+
+<p>Suppose this script is called <code>foo</code> and is found in <code>/bin</code>, then if you type:</p>
+
+<pre><code>$ foo arg1 arg2 arg3
+</code></pre>
+
+<p>the OS will rearrange things as though you had typed:</p>
+
+<pre><code>$ /bin/sed -f /bin/foo arg1 arg2 arg3
+</code></pre>
+
+<p>There is one difference though: if the setuid permission bit for <code>foo</code> is set, it will be honored in the first form of the command; if you really type the second form, the OS will honor the permission bits of <code>/bin/sed</code>, which is not <code>setuid</code>, of course.</p>
+
+<hr />
+
+<h3 id="ok-but-what-if-my-shell-script-does-not-start-with-such-a-line-or-my-os-does-not-know-about-it:800705b61f4e46482fbbca295d42dc7d">OK, but what if my shell script does NOT start with such a <code>#!</code> line or my OS does not know about it?</h3>
+
+<p>Well, if the shell (or anybody else) tries to execute it, the OS will return an error indication, as the file does not start with a valid magic number.  Upon receiving this indication the shell ASSUMES the file to be a shell script and gives it another try:</p>
+
+<pre><code>/bin/sh shell_script arguments
+</code></pre>
+
+<p>But we have already seen that a setuid bit on <code>shell_script</code> will NOT be honored in this case!</p>
+
+<hr />
+
+<h3 id="right-but-what-about-the-security-risks-of-setuid-shell-scripts:800705b61f4e46482fbbca295d42dc7d">Right, but what about the security risks of setuid shell scripts?</h3>
+
+<p>Well, suppose the script is called `/etc/setuid_script&rsquo;, starting with:</p>
+
+<pre><code>#!/bin/sh
+</code></pre>
+
+<p>Now let us see what happens if we issue the following commands:</p>
+
+<pre><code>$ cd /tmp
+$ ln /etc/setuid_script -i
+$ PATH=.
+$ -i
+</code></pre>
+
+<p>We know the last command will be rearranged to:</p>
+
+<pre><code>/bin/sh -i
+</code></pre>
+
+<p>But this command will give us an interactive shell, setuid to the owner of the script!
+Fortunately this security hole can easily be closed by making the first line:</p>
+
+<pre><code>#!/bin/sh -
+</code></pre>
+
+<p>The <code>-</code> signals the end of the option list: the next argument `<code>-i</code> will be taken as the name of the file to read commands from, just like it should!</p>
+
+<hr />
+
+<p>There are more serious problems though:</p>
+
+<pre><code>$ cd /tmp
+$ ln /etc/setuid_script temp
+$ nice -20 temp &amp;
+$ mv my_script temp
+</code></pre>
+
+<p>The third command will be rearranged to:</p>
+
+<pre><code>nice -20 /bin/sh - temp
+</code></pre>
+
+<p>As this command runs so slowly, the fourth command might be able to replace the original <code>temp</code> with <code>my_script</code> BEFORE <code>temp</code> is opened by the shell!  There are 4 ways to fix this security hole:</p>
+
+<ol>
+<li><p>let the OS start setuid scripts in a different, secure way</p>
+
+<ul>
+<li>System V R4 and 4.4BSD use the /dev/fd driver to pass the interpreter a file descriptor for the script</li>
+</ul></li>
+
+<li><p>let the script be interpreted indirectly, through a frontend that makes sure everything is all right before starting the real interpreter - if you use the <code>indir</code> program from comp.sources.unix the setuid script will look like this:</p></li>
+</ol>
+
+<pre><code>#!/bin/indir -u
+#?/bin/sh /etc/setuid_script
+</code></pre>
+
+<ol>
+<li><p>make a <code>binary wrapper</code>: a real executable that is setuid and whose only task is to execute the interpreter with the name of the script as an argument.</p></li>
+
+<li><p>make a general <code>setuid script server</code> that tries to locate the requested <code>service</code> in a database of valid scripts and upon success will start the right interpreter with the right arguments.</p></li>
+</ol>
+
+<hr />
+
+<h3 id="now-that-we-have-made-sure-the-right-file-gets-interpreted-are-there-any-risks-left:800705b61f4e46482fbbca295d42dc7d">Now that we have made sure the right file gets interpreted, are there any risks left?</h3>
+
+<p>Certainly!  For shell scripts you must not forget to set the <code>PATH</code> variable to a safe path explicitly.  Can you figure out why?
+Also there is the IFS variable that might cause trouble if not set properly.  Other environment variables might turn out to compromise security as well, e.g. SHELL&hellip;  Furthermore you must make sure the commands in the script do not allow interactive shell escapes!  Then there is the umask which may have been set to something strange&hellip;
+Etcetera.  You should realise that a setuid script <code>inherits</code> all the bugs and security risks of the commands that it calls!</p>
+
+<p>All in all we get the impression setuid shell scripts are quite a risky business!  You may be better off writing a C program instead!</p>
+
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <ul class="list-inline text-center">
+                    <li>
+                      <a href="mailto:maxime.vaude@gmail.com">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://twitter.com/wefirm">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://github.com/mvaude">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://www.facebook.com/FACEBOOKHANDLE">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                  </ul>
+                  <p class="copyright text-muted">Code released WTFPL license.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/jquery.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/bootstrap.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/clean-blog.js"></script>
+
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'XX-00000000-0', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+
+</html>
+

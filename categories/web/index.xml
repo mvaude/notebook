@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web on Notebook</title>
+    <link>https://mvaude.github.io/notebook/categories/web/</link>
+    <description>Recent content in Web on Notebook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Code released WTFPL license.</copyright>
+    <lastBuildDate>Mon, 16 Nov 2015 21:42:36 +0100</lastBuildDate>
+    <atom:link href="https://mvaude.github.io/notebook/categories/web/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Web tools</title>
+      <link>https://mvaude.github.io/notebook/post/Webtool/</link>
+      <pubDate>Mon, 16 Nov 2015 21:42:36 +0100</pubDate>
+      
+      <guid>https://mvaude.github.io/notebook/post/Webtool/</guid>
+      <description>
+
+&lt;h1 id=&#34;editor:879b7f09b9085de78ab3804706dec255&#34;&gt;Editor&lt;/h1&gt;
+
+&lt;h2 id=&#34;vim:879b7f09b9085de78ab3804706dec255&#34;&gt;Vim&lt;/h2&gt;
+
+&lt;p&gt;Because it is the best editor.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[ ] Write article about it&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;build-system:879b7f09b9085de78ab3804706dec255&#34;&gt;Build system&lt;/h1&gt;
+
+&lt;h2 id=&#34;gulp:879b7f09b9085de78ab3804706dec255&#34;&gt;Gulp&lt;/h2&gt;
+
+&lt;p&gt;This is a javascript streaming build system.
+The watch plugin is prefect to can stay in your editor and get a gulp task running just by saving the file&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[ ] Define needed plugin&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;static-generator:879b7f09b9085de78ab3804706dec255&#34;&gt;Static Generator&lt;/h1&gt;
+
+&lt;h2 id=&#34;hugo:879b7f09b9085de78ab3804706dec255&#34;&gt;Hugo&lt;/h2&gt;
+
+&lt;p&gt;Written in Go, it is really fast and easy to use.
+I wish to can replace it by a javascript gulp plugin.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[ ] Learn more about customatization&lt;/li&gt;
+&lt;li&gt;[ ] Learn more about gulp plugin to replace it&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;automation:879b7f09b9085de78ab3804706dec255&#34;&gt;Automation&lt;/h1&gt;
+
+&lt;h2 id=&#34;wercker:879b7f09b9085de78ab3804706dec255&#34;&gt;Wercker&lt;/h2&gt;
+
+&lt;p&gt;I am using it because it was this esiest way to can automatically deploy a subdirectory in another git branch.
+I really want to replace it by just a special &lt;code&gt;githook&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[ ] Check solution to replace it&lt;/li&gt;
+&lt;li&gt;[ ] Maybe Circle CI&lt;/li&gt;
+&lt;li&gt;[ ] Maybe GitHook&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;deployment:879b7f09b9085de78ab3804706dec255&#34;&gt;Deployment&lt;/h1&gt;
+
+&lt;h2 id=&#34;github-pages:879b7f09b9085de78ab3804706dec255&#34;&gt;Github Pages&lt;/h2&gt;
+
+&lt;p&gt;It&amp;rsquo;s free and unlimited in time !&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

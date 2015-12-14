@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scripting on Notebook</title>
+    <link>https://mvaude.github.io/notebook/tags/scripting/</link>
+    <description>Recent content in Scripting on Notebook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Code released WTFPL license.</copyright>
+    <lastBuildDate>Fri, 20 Nov 2015 22:15:27 +0100</lastBuildDate>
+    <atom:link href="https://mvaude.github.io/notebook/tags/scripting/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>RootMe Challenge: ELF32 System 2</title>
+      <link>https://mvaude.github.io/notebook/post/elf32-system2/</link>
+      <pubDate>Fri, 20 Nov 2015 22:15:27 +0100</pubDate>
+      
+      <guid>https://mvaude.github.io/notebook/post/elf32-system2/</guid>
+      <description>
+
+&lt;h1 id=&#34;elf32-system-2-suid-vulnerabilty:800705b61f4e46482fbbca295d42dc7d&#34;&gt;ELF32 - System 2 : SUID Vulnerabilty&lt;/h1&gt;
+
+&lt;h1 id=&#34;resources:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Resources&lt;/h1&gt;
+
+&lt;h2 id=&#34;how-can-i-get-setuid-shell-scripts-to-work-http-www-faqs-org-faqs-unix-faq-faq-part4-section-7-html:800705b61f4e46482fbbca295d42dc7d&#34;&gt;&lt;a href=&#34;http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html&#34;&gt;How can I get setuid shell scripts to work ?&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Let us first assume you are on a UNIX variant (e.g. 4.3BSD or SunOS) that knows about so-called &lt;code&gt;executable shell scripts&lt;/code&gt;.
+Such a script must start with a line like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The script is called &lt;code&gt;executable&lt;/code&gt;&lt;code&gt;because just like a real (binary) executable it starts with a so-called&lt;/code&gt;&lt;code&gt;magic number&lt;/code&gt;&lt;code&gt;indicating the type of the executable.  In our case this number is&lt;/code&gt;&lt;code&gt;#!&lt;/code&gt;` and the OS takes the rest of the first line as the interpreter for the script, possibly followed by 1 initial option like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sed -f
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Suppose this script is called &lt;code&gt;foo&lt;/code&gt; and is found in &lt;code&gt;/bin&lt;/code&gt;, then if you type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ foo arg1 arg2 arg3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;the OS will rearrange things as though you had typed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ /bin/sed -f /bin/foo arg1 arg2 arg3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There is one difference though: if the setuid permission bit for &lt;code&gt;foo&lt;/code&gt; is set, it will be honored in the first form of the command; if you really type the second form, the OS will honor the permission bits of &lt;code&gt;/bin/sed&lt;/code&gt;, which is not &lt;code&gt;setuid&lt;/code&gt;, of course.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;ok-but-what-if-my-shell-script-does-not-start-with-such-a-line-or-my-os-does-not-know-about-it:800705b61f4e46482fbbca295d42dc7d&#34;&gt;OK, but what if my shell script does NOT start with such a &lt;code&gt;#!&lt;/code&gt; line or my OS does not know about it?&lt;/h3&gt;
+
+&lt;p&gt;Well, if the shell (or anybody else) tries to execute it, the OS will return an error indication, as the file does not start with a valid magic number.  Upon receiving this indication the shell ASSUMES the file to be a shell script and gives it another try:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/bin/sh shell_script arguments
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But we have already seen that a setuid bit on &lt;code&gt;shell_script&lt;/code&gt; will NOT be honored in this case!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;right-but-what-about-the-security-risks-of-setuid-shell-scripts:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Right, but what about the security risks of setuid shell scripts?&lt;/h3&gt;
+
+&lt;p&gt;Well, suppose the script is called `/etc/setuid_script&amp;rsquo;, starting with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let us see what happens if we issue the following commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /tmp
+$ ln /etc/setuid_script -i
+$ PATH=.
+$ -i
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We know the last command will be rearranged to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/bin/sh -i
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But this command will give us an interactive shell, setuid to the owner of the script!
+Fortunately this security hole can easily be closed by making the first line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh -
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-&lt;/code&gt; signals the end of the option list: the next argument `&lt;code&gt;-i&lt;/code&gt; will be taken as the name of the file to read commands from, just like it should!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;There are more serious problems though:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /tmp
+$ ln /etc/setuid_script temp
+$ nice -20 temp &amp;amp;
+$ mv my_script temp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The third command will be rearranged to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nice -20 /bin/sh - temp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As this command runs so slowly, the fourth command might be able to replace the original &lt;code&gt;temp&lt;/code&gt; with &lt;code&gt;my_script&lt;/code&gt; BEFORE &lt;code&gt;temp&lt;/code&gt; is opened by the shell!  There are 4 ways to fix this security hole:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;let the OS start setuid scripts in a different, secure way&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;System V R4 and 4.4BSD use the /dev/fd driver to pass the interpreter a file descriptor for the script&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;let the script be interpreted indirectly, through a frontend that makes sure everything is all right before starting the real interpreter - if you use the &lt;code&gt;indir&lt;/code&gt; program from comp.sources.unix the setuid script will look like this:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/indir -u
+#?/bin/sh /etc/setuid_script
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;make a &lt;code&gt;binary wrapper&lt;/code&gt;: a real executable that is setuid and whose only task is to execute the interpreter with the name of the script as an argument.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;make a general &lt;code&gt;setuid script server&lt;/code&gt; that tries to locate the requested &lt;code&gt;service&lt;/code&gt; in a database of valid scripts and upon success will start the right interpreter with the right arguments.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;now-that-we-have-made-sure-the-right-file-gets-interpreted-are-there-any-risks-left:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Now that we have made sure the right file gets interpreted, are there any risks left?&lt;/h3&gt;
+
+&lt;p&gt;Certainly!  For shell scripts you must not forget to set the &lt;code&gt;PATH&lt;/code&gt; variable to a safe path explicitly.  Can you figure out why?
+Also there is the IFS variable that might cause trouble if not set properly.  Other environment variables might turn out to compromise security as well, e.g. SHELL&amp;hellip;  Furthermore you must make sure the commands in the script do not allow interactive shell escapes!  Then there is the umask which may have been set to something strange&amp;hellip;
+Etcetera.  You should realise that a setuid script &lt;code&gt;inherits&lt;/code&gt; all the bugs and security risks of the commands that it calls!&lt;/p&gt;
+
+&lt;p&gt;All in all we get the impression setuid shell scripts are quite a risky business!  You may be better off writing a C program instead!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

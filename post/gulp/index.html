@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>gulp -- Notebook</title>
+
+    
+
+    
+    <link href="https://mvaude.github.io/notebook/css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <link href="https://mvaude.github.io/notebook/css/clean-blog.min.css" rel="stylesheet">
+
+    
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+
+</head>
+
+<body>
+
+    
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="https://mvaude.github.io/notebook/">Notebook</a>
+            </div>
+
+                       
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/">home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://mvaude.github.io/notebook/post/">Archives</a>
+                    </li>
+                    
+                  </ul>
+            </div>
+           
+
+        </div>
+        
+    </nav>
+
+
+    
+    
+    <header class="intro-header" style="background-image: url('https://mvaude.github.io/notebook//img/about-bg.jpg')">
+      
+      <div class="container">
+        <div class="row">
+           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+             <div class="post-heading">
+               <h1>Gulp</h1>
+               <h2 class="subheading"></h2>
+               <span class="meta">Posted by <a href="#">Maxime Vaude</a> on Sun, Nov 23, 15115
+                 <br />
+                 In <a href="https://mvaude.github.io/notebook/categories/development" >Development</a>, <a href="https://mvaude.github.io/notebook/categories/golang" >Golang</a>, 
+
+                 <br />
+                 Tags <a href="https://mvaude.github.io/notebook/tags/go" >go</a> <a href="https://mvaude.github.io/notebook/tags/golang" >golang</a> <a href="https://mvaude.github.io/notebook/tags/templates" >templates</a> <a href="https://mvaude.github.io/notebook/tags/themes" >themes</a> <a href="https://mvaude.github.io/notebook/tags/development" >development</a> 
+
+               </span>
+             </div>
+           </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  
+
+<h1 id="gulp:c34aea999ea1eeef6ae97c4fa3367837">Gulp</h1>
+
+<p>Gulp is a javascript streaming build system</p>
+
+<h1 id="fundamentals:c34aea999ea1eeef6ae97c4fa3367837">Fundamentals</h1>
+
+<h2 id="what-is-a-build-system:c34aea999ea1eeef6ae97c4fa3367837">What Is A Build System ?</h2>
+
+<p>A build system is simply a collection of tasks (commonly called &ldquo;task runners&rdquo;) that automate repetetive work.</p>
+
+<h2 id="component-of-a-modern-worfklow:c34aea999ea1eeef6ae97c4fa3367837">Component of a Modern Worfklow</h2>
+
+<p>Three different components:
+* Package Managers
+* Preprocessors
+* Task Runners &amp; Build Tools</p>
+
+<h3 id="package-managers:c34aea999ea1eeef6ae97c4fa3367837">Package Managers</h3>
+
+<p>Automates packages and libraries used in your dev environment:
+* installation
+* upgrading
+* removal
+* dependencies</p>
+
+<h4 id="package-managers-dependencies:c34aea999ea1eeef6ae97c4fa3367837">Package Managers Dependencies</h4>
+
+<p>You can use 2 different package managers:
+* Bower
+* NPM</p>
+
+<h5 id="bower-project-files:c34aea999ea1eeef6ae97c4fa3367837">Bower (Project Files)</h5>
+
+<p>Manages front-end dependencies (ex: jQuery, Backbone, AngualasJS).</p>
+
+<h5 id="npm-node-js:c34aea999ea1eeef6ae97c4fa3367837">NPM (Node.js)</h5>
+
+<p>Manages node environment dev dependencies (ex: Gulp, Browser-Syc, Plumber)</p>
+
+<h3 id="preprocessors:c34aea999ea1eeef6ae97c4fa3367837">Preprocessors</h3>
+
+<p>Preprocessors are critical to an efficient modern workflow by adding additional features and an optimized syntax that compiles into its native language.</p>
+
+<h4 id="css:c34aea999ea1eeef6ae97c4fa3367837">CSS</h4>
+
+<p>Sass, Less, Stylus.</p>
+
+<h4 id="javascript:c34aea999ea1eeef6ae97c4fa3367837">Javascript</h4>
+
+<p>CofeeScript, Typescript.</p>
+
+<h4 id="html:c34aea999ea1eeef6ae97c4fa3367837">HTML</h4>
+
+<p>HAML, Jade, Markdeep, Markdown, Slim.</p>
+
+<h3 id="task-based-build-tools:c34aea999ea1eeef6ae97c4fa3367837">Task Based Build Tools</h3>
+
+<ul>
+<li>Gulp and Grunt</li>
+<li>Run on Node</li>
+<li>Similar anatomy</li>
+</ul>
+
+<h4 id="structure-of-a-typical-gulp-file:c34aea999ea1eeef6ae97c4fa3367837">Structure of a Typical Gulp File</h4>
+
+<h5 id="required-modules:c34aea999ea1eeef6ae97c4fa3367837">Required Modules</h5>
+
+<p>Declare requires dependencies</p>
+
+<pre><code>var gulp = require('gulp');
+var uglify = require('gulp-uglify');
+</code></pre>
+
+<h5 id="named-tasks:c34aea999ea1eeef6ae97c4fa3367837">Named Tasks</h5>
+
+<ul>
+<li>Compressing static images</li>
+<li>Copying files</li>
+<li>Deployment build</li>
+</ul>
+
+<pre><code>gulp.tasks('scripts', function() {
+  \\ code
+});
+
+$ gulp scripts
+`
+</code></pre>
+
+<h5 id="watch-task:c34aea999ea1eeef6ae97c4fa3367837">Watch Task</h5>
+
+<p>Watch folder <code>js</code> for all files ending in .js then on change run &lsquo;script&rsquo; task.</p>
+
+<pre><code>gulp.task('watch, function() {
+  gulp.watch('app/js/**/*.js', ['scripts']);
+});
+
+$ gulp watch
+</code></pre>
+
+<h5 id="default-task:c34aea999ea1eeef6ae97c4fa3367837">Default Task</h5>
+
+<ul>
+<li>Run both <code>scripts</code> and <code>watch</code> tasks.</li>
+<li>Asynchronously, run all tasks at the same time.</li>
+</ul>
+
+<pre><code>  gulp.task('default', ['scripts', 'watch']);
+
+  $ gulp
+</code></pre>
+
+<h3 id="gulp-vs-grunt:c34aea999ea1eeef6ae97c4fa3367837">Gulp vs Grunt</h3>
+
+<h4 id="learning:c34aea999ea1eeef6ae97c4fa3367837">Learning</h4>
+
+<h5 id="gulp-1:c34aea999ea1eeef6ae97c4fa3367837">Gulp</h5>
+
+<ul>
+<li>Easier to learn and maintain</li>
+<li>Code over configuration</li>
+</ul>
+
+<h5 id="curve:c34aea999ea1eeef6ae97c4fa3367837">Curve</h5>
+
+<ul>
+<li>Steeper learning curve</li>
+<li>Relies on A LOT of configuration
+
+<ul>
+<li>Syntax overly verbose</li>
+</ul></li>
+</ul>
+
+<h4 id="speed:c34aea999ea1eeef6ae97c4fa3367837">Speed</h4>
+
+<h5 id="gulp-2:c34aea999ea1eeef6ae97c4fa3367837">Gulp</h5>
+
+<ul>
+<li>Faster</li>
+<li>Streams</li>
+</ul>
+
+<h5 id="curve-1:c34aea999ea1eeef6ae97c4fa3367837">Curve</h5>
+
+<ul>
+<li>Possibility Slower</li>
+<li>Write to temp files</li>
+</ul>
+
+<h1 id="the-gulp-file:c34aea999ea1eeef6ae97c4fa3367837">The Gulp File</h1>
+
+<h2 id="gulp-packages:c34aea999ea1eeef6ae97c4fa3367837">Gulp Packages</h2>
+
+<h3 id="gulp-3:c34aea999ea1eeef6ae97c4fa3367837">gulp</h3>
+
+<p>The streaming build system.</p>
+
+<h3 id="gulp-plumber:c34aea999ea1eeef6ae97c4fa3367837">gulp-plumber</h3>
+
+<p>Prevents pipes from breaking caused by errors from gulp plugins.</p>
+
+<h3 id="gulp-uglify:c34aea999ea1eeef6ae97c4fa3367837">gulp-uglify</h3>
+
+<p>Minify files.</p>
+
+<h3 id="gulp-rename:c34aea999ea1eeef6ae97c4fa3367837">gulp-rename</h3>
+
+<p>Rename files.</p>
+
+<h3 id="gulp-sass:c34aea999ea1eeef6ae97c4fa3367837">gulp-sass</h3>
+
+<h3 id="gulp-autoprefixer:c34aea999ea1eeef6ae97c4fa3367837">gulp-autoprefixer</h3>
+
+<h3 id="gulp-smith:c34aea999ea1eeef6ae97c4fa3367837">gulp-smith</h3>
+
+<h3 id="del:c34aea999ea1eeef6ae97c4fa3367837">del</h3>
+
+<h3 id="gulp-sourcemaps:c34aea999ea1eeef6ae97c4fa3367837">gulp-sourcemaps</h3>
+
+<h3 id="browser-sync:c34aea999ea1eeef6ae97c4fa3367837">browser-sync</h3>
+
+<h3 id="gul-concat:c34aea999ea1eeef6ae97c4fa3367837">gul-concat</h3>
+
+<p>Delete files/folders using globs</p>
+
+<h3 id="guld-browser-sync:c34aea999ea1eeef6ae97c4fa3367837">guld-browser-sync</h3>
+
+<p>Live CSS Reload &amp; Brower Syncing</p>
+
+<h2 id="what-is-a-glob:c34aea999ea1eeef6ae97c4fa3367837">What is A Glob ?</h2>
+
+<p>In computer programming, in particular in a Unix-like environment, glob patterns specify sets of filenames with wildcard characters.</p>
+
+<h3 id="examples:c34aea999ea1eeef6ae97c4fa3367837">Examples</h3>
+
+<ul>
+<li><code>css/*.css</code> -&gt; files ending in <code>.css</code> in the css directory.</li>
+<li><code>css/**/*.css</code> -&gt; files ending in <code>.css</code> in the <code>css</code> directory and child repositories.</li>
+<li><code>!css/styles.css</code> -&gt; exclude style.css file.</li>
+<li><code>*.+(js|css)</code> -&gt; Matches all files in the <code>root</code> directory ending in <code>.js</code> or <code>.css</code>.</li>
+<li></li>
+</ul>
+
+<h3 id="improvments:c34aea999ea1eeef6ae97c4fa3367837">Improvments</h3>
+
+<h1 id="resources:c34aea999ea1eeef6ae97c4fa3367837">Resources</h1>
+
+<ul>
+<li>Joel Longie Youtube playlist ![alt][<a href="https://www.youtube.com/watch?v=LmdT2zhFmn4&amp;list=PLv1YUP7gO_viROuRcGsDCNM-FUVgMYb_G">https://www.youtube.com/watch?v=LmdT2zhFmn4&amp;list=PLv1YUP7gO_viROuRcGsDCNM-FUVgMYb_G</a>]</li>
+</ul>
+
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <ul class="list-inline text-center">
+                    <li>
+                      <a href="mailto:maxime.vaude@gmail.com">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://twitter.com/wefirm">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://github.com/mvaude">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                    <li>
+                      <a href="https://www.facebook.com/FACEBOOKHANDLE">
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    
+                  </ul>
+                  <p class="copyright text-muted">Code released WTFPL license.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/jquery.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/bootstrap.min.js"></script>
+
+    
+    <script src="https://mvaude.github.io/notebook/js/clean-blog.js"></script>
+
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'XX-00000000-0', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+</body>
+
+</html>
+

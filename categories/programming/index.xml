@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Programming on Notebook</title>
+    <link>https://mvaude.github.io/notebook/categories/programming/</link>
+    <description>Recent content in Programming on Notebook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Code released WTFPL license.</copyright>
+    <lastBuildDate>Fri, 20 Nov 2015 22:15:27 +0100</lastBuildDate>
+    <atom:link href="https://mvaude.github.io/notebook/categories/programming/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>RootMe Challenge: ELF32 System 2</title>
+      <link>https://mvaude.github.io/notebook/post/elf32-system2/</link>
+      <pubDate>Fri, 20 Nov 2015 22:15:27 +0100</pubDate>
+      
+      <guid>https://mvaude.github.io/notebook/post/elf32-system2/</guid>
+      <description>
+
+&lt;h1 id=&#34;elf32-system-2-suid-vulnerabilty:800705b61f4e46482fbbca295d42dc7d&#34;&gt;ELF32 - System 2 : SUID Vulnerabilty&lt;/h1&gt;
+
+&lt;h1 id=&#34;resources:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Resources&lt;/h1&gt;
+
+&lt;h2 id=&#34;how-can-i-get-setuid-shell-scripts-to-work-http-www-faqs-org-faqs-unix-faq-faq-part4-section-7-html:800705b61f4e46482fbbca295d42dc7d&#34;&gt;&lt;a href=&#34;http://www.faqs.org/faqs/unix-faq/faq/part4/section-7.html&#34;&gt;How can I get setuid shell scripts to work ?&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Let us first assume you are on a UNIX variant (e.g. 4.3BSD or SunOS) that knows about so-called &lt;code&gt;executable shell scripts&lt;/code&gt;.
+Such a script must start with a line like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The script is called &lt;code&gt;executable&lt;/code&gt;&lt;code&gt;because just like a real (binary) executable it starts with a so-called&lt;/code&gt;&lt;code&gt;magic number&lt;/code&gt;&lt;code&gt;indicating the type of the executable.  In our case this number is&lt;/code&gt;&lt;code&gt;#!&lt;/code&gt;` and the OS takes the rest of the first line as the interpreter for the script, possibly followed by 1 initial option like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sed -f
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Suppose this script is called &lt;code&gt;foo&lt;/code&gt; and is found in &lt;code&gt;/bin&lt;/code&gt;, then if you type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ foo arg1 arg2 arg3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;the OS will rearrange things as though you had typed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ /bin/sed -f /bin/foo arg1 arg2 arg3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There is one difference though: if the setuid permission bit for &lt;code&gt;foo&lt;/code&gt; is set, it will be honored in the first form of the command; if you really type the second form, the OS will honor the permission bits of &lt;code&gt;/bin/sed&lt;/code&gt;, which is not &lt;code&gt;setuid&lt;/code&gt;, of course.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;ok-but-what-if-my-shell-script-does-not-start-with-such-a-line-or-my-os-does-not-know-about-it:800705b61f4e46482fbbca295d42dc7d&#34;&gt;OK, but what if my shell script does NOT start with such a &lt;code&gt;#!&lt;/code&gt; line or my OS does not know about it?&lt;/h3&gt;
+
+&lt;p&gt;Well, if the shell (or anybody else) tries to execute it, the OS will return an error indication, as the file does not start with a valid magic number.  Upon receiving this indication the shell ASSUMES the file to be a shell script and gives it another try:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/bin/sh shell_script arguments
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But we have already seen that a setuid bit on &lt;code&gt;shell_script&lt;/code&gt; will NOT be honored in this case!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;right-but-what-about-the-security-risks-of-setuid-shell-scripts:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Right, but what about the security risks of setuid shell scripts?&lt;/h3&gt;
+
+&lt;p&gt;Well, suppose the script is called `/etc/setuid_script&amp;rsquo;, starting with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now let us see what happens if we issue the following commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /tmp
+$ ln /etc/setuid_script -i
+$ PATH=.
+$ -i
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We know the last command will be rearranged to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/bin/sh -i
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But this command will give us an interactive shell, setuid to the owner of the script!
+Fortunately this security hole can easily be closed by making the first line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh -
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-&lt;/code&gt; signals the end of the option list: the next argument `&lt;code&gt;-i&lt;/code&gt; will be taken as the name of the file to read commands from, just like it should!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;There are more serious problems though:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd /tmp
+$ ln /etc/setuid_script temp
+$ nice -20 temp &amp;amp;
+$ mv my_script temp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The third command will be rearranged to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;nice -20 /bin/sh - temp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As this command runs so slowly, the fourth command might be able to replace the original &lt;code&gt;temp&lt;/code&gt; with &lt;code&gt;my_script&lt;/code&gt; BEFORE &lt;code&gt;temp&lt;/code&gt; is opened by the shell!  There are 4 ways to fix this security hole:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;let the OS start setuid scripts in a different, secure way&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;System V R4 and 4.4BSD use the /dev/fd driver to pass the interpreter a file descriptor for the script&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;let the script be interpreted indirectly, through a frontend that makes sure everything is all right before starting the real interpreter - if you use the &lt;code&gt;indir&lt;/code&gt; program from comp.sources.unix the setuid script will look like this:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/indir -u
+#?/bin/sh /etc/setuid_script
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;make a &lt;code&gt;binary wrapper&lt;/code&gt;: a real executable that is setuid and whose only task is to execute the interpreter with the name of the script as an argument.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;make a general &lt;code&gt;setuid script server&lt;/code&gt; that tries to locate the requested &lt;code&gt;service&lt;/code&gt; in a database of valid scripts and upon success will start the right interpreter with the right arguments.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;now-that-we-have-made-sure-the-right-file-gets-interpreted-are-there-any-risks-left:800705b61f4e46482fbbca295d42dc7d&#34;&gt;Now that we have made sure the right file gets interpreted, are there any risks left?&lt;/h3&gt;
+
+&lt;p&gt;Certainly!  For shell scripts you must not forget to set the &lt;code&gt;PATH&lt;/code&gt; variable to a safe path explicitly.  Can you figure out why?
+Also there is the IFS variable that might cause trouble if not set properly.  Other environment variables might turn out to compromise security as well, e.g. SHELL&amp;hellip;  Furthermore you must make sure the commands in the script do not allow interactive shell escapes!  Then there is the umask which may have been set to something strange&amp;hellip;
+Etcetera.  You should realise that a setuid script &lt;code&gt;inherits&lt;/code&gt; all the bugs and security risks of the commands that it calls!&lt;/p&gt;
+
+&lt;p&gt;All in all we get the impression setuid shell scripts are quite a risky business!  You may be better off writing a C program instead!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>RootMe Challenge: ELF32 System I</title>
+      <link>https://mvaude.github.io/notebook/post/elf32-system1/</link>
+      <pubDate>Fri, 20 Nov 2015 18:50:35 +0100</pubDate>
+      
+      <guid>https://mvaude.github.io/notebook/post/elf32-system1/</guid>
+      <description>
+
+&lt;h1 id=&#34;elf32-system-1-suid-scripts-vulnerabilities:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;ELF32 - System 1 - SUID scripts vulnerabilities&lt;/h1&gt;
+
+&lt;h1 id=&#34;resources:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Resources&lt;/h1&gt;
+
+&lt;h2 id=&#34;danger-of-suid-shell-scripts-http-repository-root-me-org-administration-unix-en-20-20dangers-20of-20suid-20shell-20scripts-pdf:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;&lt;a href=&#34;http://repository.root-me.org/Administration/Unix/EN%20-%20Dangers%20of%20SUID%20Shell%20Scripts.pdf&#34;&gt;Danger of SUID Shell Scripts&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;1-never-use-c-shell-for-suid-scipts:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;1. Never use C-shell for SUID scipts&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls change-pass
+-rwsr-x---  1 root helpdesk 37 Feb 26 16:35 change-pass
+
+$ cat change-pass
+#!/bin/csh -b
+set user = $1
+passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env TERM=&#39;`cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755/tmp/sh`&#39; change-pass
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-always-manually-set-the-path-and-use-absolute-path-names:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;2. Always manually set the PATH and use absolute path names.&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+#!/bin/ksh
+user=$1
+passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ export PATH=&#39;/tmp&#39;
+$ echo &amp;quot;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755/tmp/sh&amp;quot; &amp;gt; /tmp/passwd
+$ ./change-pass
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-understand-how-the-programs-in-your-script-work-escpecially-how-they-handle-arguments:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;3. Understand how the programs in your script work, escpecially how they handle arguments&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+#!/bin/ksh
+PATH=&#39;/bin:/usr/bin&#39;
+user=$1
+rm /tmp/.user
+echo &amp;quot;$user&amp;quot; &amp;gt; /tmp/.user
+isroot=&#39;/usr/bin/grep -c root /tmp/.user&#39;
+[ &amp;quot;$isroot&amp;quot; -gt 0 ] &amp;amp;&amp;amp; echo &amp;quot;You Can&#39;t change root&#39;s password!&amp;quot; &amp;amp;&amp;amp; exit
+/usr/bin/passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If the user runs the program and doesn&amp;rsquo;t specify an argument, the program will run the passwd command without any arguments. It default so to the current user, the problem is that in a root-owned SUID script, the current user is always root.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+$!/bin/ksh
+PATH=&#39;/bin:/usr/bin&#39;
+user=$1
+[ -z $user ] &amp;amp;&amp;amp; echo &amp;quot;Usage: change-pass username&amp;quot; &amp;amp;&amp;amp; exit
+rm /tmp/.user
+echo &amp;quot;$user&amp;quot; &amp;gt; /tmp/.user
+isroot=&#39;/usr/bin/grep -c root /tmp/.user&#39;
+[ &amp;quot;$isroot&amp;quot; -gt 0] &amp;amp;&amp;amp; echo &amp;quot;You Can&#39;t change root&#39;s password!&amp;quot; &amp;amp;&amp;amp; exit
+/usr/bin/passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A hacker could write a program that will automatically watch for activity and replace the /tmp/.user file between the &lt;code&gt;rm&lt;/code&gt; and &lt;code&gt;echo&lt;/code&gt; by an empty one. It could not be overwritten and so run as root.&lt;/p&gt;
+
+&lt;h2 id=&#34;4-don-t-use-temporary-files-don-t-put-them-in-a-publicity-writable-area:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;4. Don&amp;rsquo;t use temporary files, don&amp;rsquo;t put them in a publicity writable area&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+#!/bin/ksh
+PATH=&#39;/bin:/usr/bin&#39;
+user=$1
+[ -z $user ] &amp;amp;&amp;amp; echo &amp;quot;Usage: change-pass username&amp;quot; &amp;amp;&amp;amp; exit
+[ &amp;quot;$user&amp;quot; = root ] &amp;amp;&amp;amp; echo &amp;quot;You can&#39;t change root&#39;s password!&amp;quot; &amp;amp;&amp;amp; exit
+/usr/bin/passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack (semi-colon trick):&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ change-pass &amp;quot;user;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755 /tmp/sh&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;5-distrust-and-check-all-user-input-and-strip-out-any-meta-characters:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;5. Distrust and check all user input, and strip out any meta-characters&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+#!/bin/ksh
+PATH=&#39;/bin:/usr/bin&#39;
+user=${1##*[ \\$/;()|\&amp;gt;\&amp;lt;&amp;amp;    ]}
+[ -z $user ] &amp;amp;&amp;amp; echo &amp;quot;Usage: change-pass username&amp;quot; &amp;amp;&amp;amp; exit
+[ &amp;quot;$user&amp;quot; = root ] &amp;amp;&amp;amp; &amp;quot;You can&#39;t change root&#39;s password!&amp;quot; &amp;amp;&amp;amp; exit
+/usr/bin/passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack (Internal Filed Separator (IFS) vulnerability):&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ export IFS=&#39;/&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;6-always-manually-set-ifs:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;6. Always manually set IFS&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Script:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat change-pass
+#!/bin/ksh
+PATH=&#39;/bin:/usr/bin&#39;
+IFS=&#39; &#39;
+user=${1##*[ \\$/;()|\&amp;gt;\&amp;lt;&amp;amp;    ]}
+[ -z $user ] &amp;amp;&amp;amp; echo &amp;quot;Usage: change-pass username&amp;quot; &amp;amp;&amp;amp; exit
+[ &amp;quot;$user&amp;quot; = root ] &amp;amp;&amp;amp; &amp;quot;You can&#39;t change root&#39;s password!&amp;quot; &amp;amp;&amp;amp; exit
+/usr/bin/passwd $user
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hack:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;// Create a link to the SUID script:
+$ cd /tmp
+ln -s change-pass rootme
+
+// Running the link, quickly replace it with another file:
+$ ./rootmer &amp;amp;
+&amp;amp; rm rootme &amp;amp;&amp;amp; \
+  echo &amp;quot;cp /bin/sh /tmp/sh;chown root /tmp/sh;chmod 4755 /tmp/sh&amp;quot; \
+    &amp;gt;&amp;gt; rootme
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;7-don-t-use-suid-shell-scripts:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;7. Don&amp;rsquo;t use SUID shell scripts&lt;/h2&gt;
+
+&lt;p&gt;There are the more secure options (even more):
+  - a wrapper program written in C
+  - a Perl script
+  - a program like sudo&lt;/p&gt;
+
+&lt;h2 id=&#34;suid-privileged-programs-http-repository-root-me-org-administration-unix-en-20-20suid-20privileged-20programs-pdf:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;&lt;a href=&#34;http://repository.root-me.org/Administration/Unix/EN%20-%20SUID%20Privileged%20Programs.pdf&#34;&gt;SUID Privileged Programs&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;1-how-set-uid-mechanism-works:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;1. How Set-UID Mechanism Works&lt;/h2&gt;
+
+&lt;h3 id=&#34;motivations:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Motivations&lt;/h3&gt;
+
+&lt;p&gt;– You want other people to be able to search some words in your file, but you don’t want them to be able to read the file. How do you achieve this?
+– Users’ passwords are stored in/etc/shadow, which is neither readable nor writable to normal users.  However, the passwd program allows users to change their passwords.  Namely, when users run &lt;code&gt;passwd&lt;/code&gt;, they can suddenly modify &lt;code&gt;/etc/shadow&lt;/code&gt;. Moreover users can only modify one entry in &lt;code&gt;/etc/shadow&lt;/code&gt;, but not the other people’s entries. How is this achieved?&lt;/p&gt;
+
+&lt;h3 id=&#34;set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Set-UID programs&lt;/h3&gt;
+
+&lt;p&gt;– The concept of effective uid and real uid.
+– For non Set-UID programs, the effective uid and the real uid are the same.
+– For Set-UID programs, the effective uid is the owner of the program, while the real uid is the user of the program.&lt;/p&gt;
+
+&lt;h3 id=&#34;effective-user-uid-and-real-user-uid:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Effective User UID and Real User UID&lt;/h3&gt;
+
+&lt;p&gt;– At login time, the real user ID, effective user ID, and saved user ID of the login process are set to the login ID of the user responsible for the creation of the process.  The same is true for the real, effective, and saved group IDs; they are set to the group ID of the user responsible for the creation of the process.
+– When a process calls one of the &lt;code&gt;exec&lt;/code&gt; family of functions to execute a file (program), the user
+and/or group identifiers associated with the process can change. If the file executed is a set-user-ID file, the effective and saved user IDs of the process are set to the owner of the file executed.
+If the file executed is a set-group-ID file, the effective and saved group IDs of the process are set to the group of the file executed. If the file executed is not a set-user-ID or set-group-ID file, the effective user ID, saved user ID, effective group ID, and saved group ID are not changed.
+– Access control is based on effective user IDs and group ID&lt;/p&gt;
+
+&lt;h3 id=&#34;how-to-turn-on-the-set-uid-bit:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;How to turn on the Set-UID bit ?&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ 4755 file ---&amp;gt; -rwsr-xr-x
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-vulnerabilites-of-set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;2. Vulnerabilites of Set-UID Programs&lt;/h2&gt;
+
+&lt;h3 id=&#34;hidden-inputs-environment-variables:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Hidden Inputs: Environment Variables&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;PATH&lt;/code&gt; Envronment Variable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;system(&amp;quot;mail&amp;quot;);
+
+$ PATH=&amp;quot;.:PATH&amp;quot;; export PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;IFS&lt;/code&gt; Environment Variable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ IFS=&amp;quot;/ \t\n&amp;quot;; export IFS
+
+system(&amp;quot;/bin/mail root&amp;quot;); ---&amp;gt; system(&amp;quot; bin mail root&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;LD_LIBRARY_PATH&lt;/code&gt; Environment Variable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ldd /bin/ls
+$ setenv LD_LIBRARY_PATH .:$LD_LIBRARY_PATH
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;LD_PRELOAD&lt;/code&gt; Environment Variable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ export LD_PRELOAD=./libmylib.so.1.0.1
+
+// a.c
+#include &amp;lt;stdio.h&amp;gt;
+void sleep (int s) {
+    printf(&amp;quot;I am not sleeping!\n&amp;quot;);
+}
+
+$ gcc -fPIC -g -c a.c
+$ gcc -shared -o libmylib.so.1.0.1 a.o -lc
+
+// target.c
+int main() {
+    sleep(1);
+    return(0);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;other-well-known-vulnerability-patterns:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Other Well-Known Vulnerability Patterns&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Bufferflow Vulnerability&lt;/li&gt;
+&lt;li&gt;Race Condition Vulnerability&lt;/li&gt;
+&lt;li&gt;Format-String Vulnerability&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;miscelaneous-vulnerabilities:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Miscelaneous Vulnerabilities&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;lpr&lt;/code&gt; vulnerability&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chsh&lt;/code&gt; vulnerability&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sendmail&lt;/code&gt; vulnerability&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;3-improving-the-security-of-set-uid-programs:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;3. Improving the Security of &lt;code&gt;Set-UID&lt;/code&gt; Programs&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The &lt;code&gt;exec&lt;/code&gt; functions&lt;/li&gt;
+&lt;li&gt;Improve the security of system()&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;4-principle-of-least-privilege:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;4. Principle of Least Privilege&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Every program and every user of the system should operate using the least set of privileges necessary to complete the job.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The most important reason for limiting the security privileges your code requires to run is to reduce
+the damage that can occur should your code be exploited by a malicious user.  If your code only
+runs with basic privileges, its difficult for malicious users to do much damage with it. If you require
+users to run your code using administrator privileges, then any security weakness in your code could
+potentially cause greater damage by the malicious code that exploits that weakness.&lt;/p&gt;
+
+&lt;h3 id=&#34;questions-to-ask-when-writing-a-privilege-program:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;Questions to ask when writing a privilege program&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Does the program need all the privileges ?&lt;/li&gt;
+&lt;li&gt;Does the program need all the privileges ?&lt;/li&gt;
+&lt;li&gt;Does the program need the privileges now ?&lt;/li&gt;
+&lt;li&gt;Does the program need the privileges in the future ?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;what-mechanisms-does-unic-provide-for-us-to-achieve-the-least-privilege-principle:5b4b6ad1a22024f58da79e5ddd85c41e&#34;&gt;What mechanisms does Unic provide for us to achieve the least-privilege principle ?&lt;/h3&gt;
+
+&lt;p&gt;Usefule system calls:
+  - &lt;code&gt;setuid()&lt;/code&gt;
+  - &lt;code&gt;seteuid()&lt;/code&gt;
+  - &lt;code&gt;setgid()&lt;/code&gt;
+  - &lt;code&gt;setegid()&lt;/code&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>nodejs 2015 (es6 and es7 features)</title>
+      <link>https://mvaude.github.io/notebook/post/nodejs-2015/</link>
+      <pubDate>Wed, 18 Nov 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://mvaude.github.io/notebook/post/nodejs-2015/</guid>
+      <description>
+
+&lt;h1 id=&#34;nodejs:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Nodejs&lt;/h1&gt;
+
+&lt;h1 id=&#34;es6-features:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;ES6 features&lt;/h1&gt;
+
+&lt;h2 id=&#34;introduction:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;ECMAScript 6, also known as ECMAScript 2015, is the latest version of the ECMAScript standard.  ES6 is a significant update to the language, and the first update to the language since ES5 was standardized in 2009. Implementation of these features in major JavaScript engines is &lt;a href=&#34;http://kangax.github.io/es5-compat-table/es6/&#34;&gt;underway now&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;See the &lt;a href=&#34;http://www.ecma-international.org/ecma-262/6.0/&#34;&gt;ES6 standard&lt;/a&gt; for full specification of the ECMAScript 6 language.&lt;/p&gt;
+
+&lt;p&gt;ES6 includes the following new features:
+- &lt;a href=&#34;#arrows&#34;&gt;arrows&lt;/a&gt;
+- &lt;a href=&#34;#classes&#34;&gt;classes&lt;/a&gt;
+- &lt;a href=&#34;#enhanced-object-literals&#34;&gt;enhanced object literals&lt;/a&gt;
+- &lt;a href=&#34;#template-strings&#34;&gt;template strings&lt;/a&gt;
+- &lt;a href=&#34;#destructuring&#34;&gt;destructuring&lt;/a&gt;
+- &lt;a href=&#34;#default--rest--spread&#34;&gt;default + rest + spread&lt;/a&gt;
+- &lt;a href=&#34;#let--const&#34;&gt;let + const&lt;/a&gt;
+- &lt;a href=&#34;#iterators--forof&#34;&gt;iterators + for..of&lt;/a&gt;
+- &lt;a href=&#34;#generators&#34;&gt;generators&lt;/a&gt;
+- &lt;a href=&#34;#unicode&#34;&gt;unicode&lt;/a&gt;
+- &lt;a href=&#34;#modules&#34;&gt;modules&lt;/a&gt;
+- &lt;a href=&#34;#module-loaders&#34;&gt;module loaders&lt;/a&gt;
+- &lt;a href=&#34;#map--set--weakmap--weakset&#34;&gt;map + set + weakmap + weakset&lt;/a&gt;
+- &lt;a href=&#34;#proxies&#34;&gt;proxies&lt;/a&gt;
+- &lt;a href=&#34;#symbols&#34;&gt;symbols&lt;/a&gt;
+- &lt;a href=&#34;#subclassable-built-ins&#34;&gt;subclassable built-ins&lt;/a&gt;
+- &lt;a href=&#34;#promises&#34;&gt;promises&lt;/a&gt;
+- &lt;a href=&#34;#math--number--string--array--object-apis&#34;&gt;math + number + string + array + object APIs&lt;/a&gt;
+- &lt;a href=&#34;#binary-and-octal-literals&#34;&gt;binary and octal literals&lt;/a&gt;
+- &lt;a href=&#34;#reflect-api&#34;&gt;reflect api&lt;/a&gt;
+- &lt;a href=&#34;#tail-calls&#34;&gt;tail calls&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;ecmascript-6-features:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;ECMAScript 6 Features&lt;/h2&gt;
+
+&lt;h3 id=&#34;arrows:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Arrows&lt;/h3&gt;
+
+&lt;p&gt;Arrows are a function shorthand using the &lt;code&gt;=&amp;gt;&lt;/code&gt; syntax.  They are syntactically similar to the related feature in C#, Java 8 and CoffeeScript.  They support both statement block bodies as well as expression bodies which return the value of the expression.  Unlike functions, arrows share the same lexical &lt;code&gt;this&lt;/code&gt; as their surrounding code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Expression bodies
+var odds = evens.map(v =&amp;gt; v + 1);
+var nums = evens.map((v, i) =&amp;gt; v + i);
+var pairs = evens.map(v =&amp;gt; ({even: v, odd: v + 1}));
+
+// Statement bodies
+nums.forEach(v =&amp;gt; {
+  if (v % 5 === 0)
+    fives.push(v);
+});
+
+// Lexical this
+var bob = {
+  _name: &amp;quot;Bob&amp;quot;,
+  _friends: [],
+  printFriends() {
+    this._friends.forEach(f =&amp;gt;
+      console.log(this._name + &amp;quot; knows &amp;quot; + f));
+  }
+}
+
+// Lexical arguments
+function square() {
+  let example = () =&amp;gt; {
+    let numbers = [];
+    for (number of arguments) {
+      numbers.push(number * 2);
+    }
+
+    return numbers;
+  };
+
+  return example();
+}
+
+square(2, 4, 7.5, 8, 11.5, 21); // returns: [4, 8, 15, 16, 23, 42]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;classes:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Classes&lt;/h3&gt;
+
+&lt;p&gt;ES6 classes are a simple sugar over the prototype-based OO pattern.  Having a single convenient declarative form makes class patterns easier to use, and encourages interoperability.  Classes support prototype-based inheritance, super calls, instance and static methods and constructors.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;class SkinnedMesh extends THREE.Mesh {
+  constructor(geometry, materials) {
+    super(geometry, materials);
+
+    this.idMatrix = SkinnedMesh.defaultMatrix();
+    this.bones = [];
+    this.boneMatrices = [];
+    //...
+  }
+  update(camera) {
+    //...
+    super.update();
+  }
+  get boneCount() {
+    return this.bones.length;
+  }
+  set matrixType(matrixType) {
+    this.idMatrix = SkinnedMesh[matrixType]();
+  }
+  static defaultMatrix() {
+    return new THREE.Matrix4();
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;enhanced-object-literals:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Enhanced Object Literals&lt;/h3&gt;
+
+&lt;p&gt;Object literals are extended to support setting the prototype at construction, shorthand for &lt;code&gt;foo: foo&lt;/code&gt; assignments, defining methods, making super calls, and computing property names with expressions.  Together, these also bring object literals and class declarations closer together, and let object-based design benefit from some of the same conveniences.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;var obj = {
+    // __proto__
+    __proto__: theProtoObj,
+    // Shorthand for ‘handler: handler’
+    handler,
+    // Methods
+    toString() {
+    // Super calls
+     return &amp;quot;d &amp;quot; + super.toString();
+    },
+    // Computed (dynamic) property names
+    [ &#39;prop_&#39; + (() =&amp;gt; 42)() ]: 42
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;template-strings:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Template Strings&lt;/h3&gt;
+
+&lt;p&gt;Template strings provide syntactic sugar for constructing strings.  This is similar to string interpolation features in Perl, Python and more.  Optionally, a tag can be added to allow the string construction to be customized, avoiding injection attacks or constructing higher level data structures from string contents.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Basic literal string creation
+`In JavaScript &#39;\n&#39; is a line-feed.` === &amp;quot;In Javascript &#39;\n&#39; is a line-feed.&amp;quot;
+
+// Multiline strings
+`In ES6 this line break is
+ now legal.` === &amp;quot;In ES6 this line break is\n now legal.&amp;quot;
+
+// String interpolation
+var name = &amp;quot;Bob&amp;quot;, time = &amp;quot;today&amp;quot;;
+`Hello ${name}, how are you ${time}?`
+
+// Construct an HTTP request prefix is used to interpret the replacements and construction
+POST`http://foo.org/bar?a=${a}&amp;amp;b=${b}
+     Content-Type: application/json
+     X-Credentials: ${credentials}
+     { &amp;quot;foo&amp;quot;: ${foo},
+       &amp;quot;bar&amp;quot;: ${bar}}`(myOnReadyStateChangeHandler);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;destructuring:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Destructuring&lt;/h3&gt;
+
+&lt;p&gt;Destructuring allows binding using pattern matching, with support for matching arrays and objects.  Destructuring is fail-soft, similar to standard object lookup &lt;code&gt;foo[&amp;quot;bar&amp;quot;]&lt;/code&gt;, producing &lt;code&gt;undefined&lt;/code&gt; values when not found.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// list matching
+var [a, , c] = [1, 2, 3];
+
+// object matching
+var { op: a, lhs: { op: b }, rhs: c }
+       = getASTNode()
+
+// object matching shorthand
+// binds `op`, `lhs` and `rhs` in scope
+var {op, lhs, rhs} = getASTNode()
+
+// Can be used in parameter position
+function g({name: x}) {
+  console.log(x);
+}
+g({name: 5})
+
+// Fail-soft destructuring
+var [a] = [];
+a === undefined;
+
+// Fail-soft destructuring with defaults
+var [a = 1] = [];
+a === 1;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;default-rest-spread:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Default + Rest + Spread&lt;/h3&gt;
+
+&lt;p&gt;Callee-evaluated default parameter values.  Turn an array into consecutive arguments in a function call.  Bind trailing parameters to an array.  Rest replaces the need for &lt;code&gt;arguments&lt;/code&gt; and addresses common cases more directly.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function f(x, y=12) {
+  // y is 12 if not passed (or passed as undefined)
+  return x + y;
+}
+f(3) == 15
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function f(x, ...y) {
+  // y is an Array
+  return x * y.length;
+}
+f(3, &amp;quot;hello&amp;quot;, true) == 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function f(x, y, z) {
+  return x + y + z;
+}
+// Pass each elem of array as argument
+f(...[1,2,3]) == 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;let-const:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Let + Const&lt;/h3&gt;
+
+&lt;p&gt;Block-scoped binding constructs.  &lt;code&gt;let&lt;/code&gt; is the new &lt;code&gt;var&lt;/code&gt;.  &lt;code&gt;const&lt;/code&gt; is single-assignment.  Static restrictions prevent use before assignment.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function f() {
+  {
+    let x;
+    {
+      // okay, block scoped name
+      const x = &amp;quot;sneaky&amp;quot;;
+      // error, const
+      x = &amp;quot;foo&amp;quot;;
+    }
+    // error, already declared in block
+    let x = &amp;quot;inner&amp;quot;;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;iterators-for-of:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Iterators + For..Of&lt;/h3&gt;
+
+&lt;p&gt;Iterator objects enable custom iteration like CLR IEnumerable or Java Iterable.  Generalize &lt;code&gt;for..in&lt;/code&gt; to custom iterator-based iteration with &lt;code&gt;for..of&lt;/code&gt;.  Don’t require realizing an array, enabling lazy design patterns like LINQ.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;let fibonacci = {
+  [Symbol.iterator]() {
+    let pre = 0, cur = 1;
+    return {
+      next() {
+        [pre, cur] = [cur, pre + cur];
+        return { done: false, value: cur }
+      }
+    }
+  }
+}
+
+for (var n of fibonacci) {
+  // truncate the sequence at 1000
+  if (n &amp;gt; 1000)
+    break;
+  console.log(n);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Iteration is based on these duck-typed interfaces (using &lt;a href=&#34;http://typescriptlang.org&#34;&gt;TypeScript&lt;/a&gt; type syntax for exposition only):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-TypeScript&#34;&gt;interface IteratorResult {
+  done: boolean;
+  value: any;
+}
+interface Iterator {
+  next(): IteratorResult;
+}
+interface Iterable {
+  [Symbol.iterator](): Iterator
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;generators:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Generators&lt;/h3&gt;
+
+&lt;p&gt;Generators simplify iterator-authoring using &lt;code&gt;function*&lt;/code&gt; and &lt;code&gt;yield&lt;/code&gt;.  A function declared as function* returns a Generator instance.  Generators are subtypes of iterators which include additional  &lt;code&gt;next&lt;/code&gt; and &lt;code&gt;throw&lt;/code&gt;.  These enable values to flow back into the generator, so &lt;code&gt;yield&lt;/code&gt; is an expression form which returns a value (or throws).&lt;/p&gt;
+
+&lt;p&gt;Note: Can also be used to enable ‘await’-like async programming, see also ES7 &lt;code&gt;await&lt;/code&gt; proposal.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;var fibonacci = {
+  [Symbol.iterator]: function*() {
+    var pre = 0, cur = 1;
+    for (;;) {
+      var temp = pre;
+      pre = cur;
+      cur += temp;
+      yield cur;
+    }
+  }
+}
+
+for (var n of fibonacci) {
+  // truncate the sequence at 1000
+  if (n &amp;gt; 1000)
+    break;
+  console.log(n);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The generator interface is (using &lt;a href=&#34;http://typescriptlang.org&#34;&gt;TypeScript&lt;/a&gt; type syntax for exposition only):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-TypeScript&#34;&gt;interface Generator extends Iterator {
+    next(value?: any): IteratorResult;
+    throw(exception: any);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;unicode:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Unicode&lt;/h3&gt;
+
+&lt;p&gt;Non-breaking additions to support full Unicode, including new Unicode literal form in strings and new RegExp &lt;code&gt;u&lt;/code&gt; mode to handle code points, as well as new APIs to process strings at the 21bit code points level.  These additions support building global apps in JavaScript.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// same as ES5.1
+&amp;quot;𠮷&amp;quot;.length == 2
+
+// new RegExp behaviour, opt-in ‘u’
+&amp;quot;𠮷&amp;quot;.match(/./u)[0].length == 2
+
+// new form
+&amp;quot;\u{20BB7}&amp;quot;==&amp;quot;𠮷&amp;quot;==&amp;quot;\uD842\uDFB7&amp;quot;
+
+// new String ops
+&amp;quot;𠮷&amp;quot;.codePointAt(0) == 0x20BB7
+
+// for-of iterates code points
+for(var c of &amp;quot;𠮷&amp;quot;) {
+  console.log(c);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;modules:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Modules&lt;/h3&gt;
+
+&lt;p&gt;Language-level support for modules for component definition.  Codifies patterns from popular JavaScript module loaders (AMD, CommonJS). Runtime behaviour defined by a host-defined default loader.  Implicitly async model – no code executes until requested modules are available and processed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// lib/math.js
+export function sum(x, y) {
+  return x + y;
+}
+export var pi = 3.141593;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// app.js
+import * as math from &amp;quot;lib/math&amp;quot;;
+alert(&amp;quot;2π = &amp;quot; + math.sum(math.pi, math.pi));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// otherApp.js
+import {sum, pi} from &amp;quot;lib/math&amp;quot;;
+alert(&amp;quot;2π = &amp;quot; + sum(pi, pi));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Some additional features include &lt;code&gt;export default&lt;/code&gt; and &lt;code&gt;export *&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// lib/mathplusplus.js
+export * from &amp;quot;lib/math&amp;quot;;
+export var e = 2.71828182846;
+export default function(x) {
+    return Math.log(x);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// app.js
+import ln, {pi, e} from &amp;quot;lib/mathplusplus&amp;quot;;
+alert(&amp;quot;2π = &amp;quot; + ln(e)*pi*2);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;module-loaders:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Module Loaders&lt;/h3&gt;
+
+&lt;p&gt;Module loaders support:
+- Dynamic loading
+- State isolation
+- Global namespace isolation
+- Compilation hooks
+- Nested virtualization&lt;/p&gt;
+
+&lt;p&gt;The default module loader can be configured, and new loaders can be constructed to evaluate and load code in isolated or constrained contexts.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Dynamic loading – ‘System’ is default loader
+System.import(&#39;lib/math&#39;).then(function(m) {
+  alert(&amp;quot;2π = &amp;quot; + m.sum(m.pi, m.pi));
+});
+
+// Create execution sandboxes – new Loaders
+var loader = new Loader({
+  global: fixup(window) // replace ‘console.log’
+});
+loader.eval(&amp;quot;console.log(&#39;hello world!&#39;);&amp;quot;);
+
+// Directly manipulate module cache
+System.get(&#39;jquery&#39;);
+System.set(&#39;jquery&#39;, Module({$: $})); // WARNING: not yet finalized
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;map-set-weakmap-weakset:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Map + Set + WeakMap + WeakSet&lt;/h3&gt;
+
+&lt;p&gt;Efficient data structures for common algorithms.  WeakMaps provides leak-free object-key’d side tables.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Sets
+var s = new Set();
+s.add(&amp;quot;hello&amp;quot;).add(&amp;quot;goodbye&amp;quot;).add(&amp;quot;hello&amp;quot;);
+s.size === 2;
+s.has(&amp;quot;hello&amp;quot;) === true;
+
+// Maps
+var m = new Map();
+m.set(&amp;quot;hello&amp;quot;, 42);
+m.set(s, 34);
+m.get(s) == 34;
+
+// Weak Maps
+var wm = new WeakMap();
+wm.set(s, { extra: 42 });
+wm.size === undefined
+
+// Weak Sets
+var ws = new WeakSet();
+ws.add({ data: 42 });
+// Because the added object has no other references, it will not be held in the set
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;proxies:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Proxies&lt;/h3&gt;
+
+&lt;p&gt;Proxies enable creation of objects with the full range of behaviors available to host objects.  Can be used for interception, object virtualization, logging/profiling, etc.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Proxying a normal object
+var person = { name: &amp;quot;Alice&amp;quot; };
+var handlers = {
+    get: function (target, property, receiver) {
+        if (property === &amp;quot;realName&amp;quot;) {
+            return target.name;
+        } else if (property === &amp;quot;fakeName&amp;quot;) {
+            return &amp;quot;Really &amp;quot; + receiver.name;
+        }
+        return &amp;quot;Bob&amp;quot;;
+    }
+};
+
+var fakePerson = new Proxy(person, handlers);
+fakePerson.name === &amp;quot;Bob&amp;quot; &amp;amp;&amp;amp;
+fakePerson.realName === &amp;quot;Alice&amp;quot; &amp;amp;&amp;amp;
+fakePerson.fakeName === &amp;quot;Really Bob&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Proxying a function object
+var target = function () { return &#39;I am the target&#39;; };
+var handler = {
+  apply: function (receiver, ...args) {
+    return &#39;I am the proxy&#39;;
+  }
+};
+
+var p = new Proxy(target, handler);
+p() === &#39;I am the proxy&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are traps available for all of the runtime-level meta-operations:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;var handler =
+{
+  get:...,
+  set:...,
+  has:...,
+  deleteProperty:...,
+  apply:...,
+  construct:...,
+  getOwnPropertyDescriptor:...,
+  defineProperty:...,
+  getPrototypeOf:...,
+  setPrototypeOf:...,
+  enumerate:...,
+  ownKeys:...,
+  preventExtensions:...,
+  isExtensible:...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;symbols:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Symbols&lt;/h3&gt;
+
+&lt;p&gt;Symbols enable access control for object state.  Symbols allow properties to be keyed by either &lt;code&gt;string&lt;/code&gt; (as in ES5) or &lt;code&gt;symbol&lt;/code&gt;.  Symbols are a new primitive type. Optional &lt;code&gt;description&lt;/code&gt; parameter used in debugging - but is not part of identity.  Symbols are unique (like gensym), but not private since they are exposed via reflection features like &lt;code&gt;Object.getOwnPropertySymbols&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;var MyClass = (function() {
+
+  // module scoped symbol
+  var key = Symbol(&amp;quot;key&amp;quot;);
+
+  function MyClass(privateData) {
+    this[key] = privateData;
+  }
+
+  MyClass.prototype = {
+    doStuff: function() {
+      ... this[key] ...
+    }
+  };
+
+  return MyClass;
+})();
+
+var c = new MyClass(&amp;quot;hello&amp;quot;)
+c[&amp;quot;key&amp;quot;] === undefined
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;subclassable-built-ins:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Subclassable Built-ins&lt;/h3&gt;
+
+&lt;p&gt;In ES6, built-ins like &lt;code&gt;Array&lt;/code&gt;, &lt;code&gt;Date&lt;/code&gt; and DOM &lt;code&gt;Element&lt;/code&gt;s can be subclassed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;// Array subclass
+class MyArray extends Array {
+    constructor(...args) { super(...args); }
+}
+
+var arr = new MyArray();
+arr[1] = 12;
+arr.length == 2;
+Array.isArray(arr); // true
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;math-number-string-array-object-apis:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Math + Number + String + Array + Object APIs&lt;/h3&gt;
+
+&lt;p&gt;Many new library additions, including core Math libraries, Array conversion helpers, String helpers, and Object.assign for copying.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;Number.EPSILON
+Number.isInteger(Infinity) // false
+Number.isNaN(&amp;quot;NaN&amp;quot;) // false
+
+Math.acosh(3) // 1.762747174039086
+Math.hypot(3, 4) // 5
+Math.imul(Math.pow(2, 32) - 1, Math.pow(2, 32) - 2) // 2
+
+&amp;quot;abcde&amp;quot;.includes(&amp;quot;cd&amp;quot;) // true
+&amp;quot;abc&amp;quot;.repeat(3) // &amp;quot;abcabcabc&amp;quot;
+
+Array.from(document.querySelectorAll(&#39;*&#39;)) // Returns a real Array
+Array.of(1, 2, 3) // Similar to new Array(...), but without special one-arg behavior
+[0, 0, 0].fill(7, 1) // [0,7,7]
+[1, 2, 3].find(x =&amp;gt; x == 3) // 3
+[1, 2, 3].findIndex(x =&amp;gt; x == 2) // 1
+[1, 2, 3, 4, 5].copyWithin(3, 0) // [1, 2, 3, 1, 2]
+[&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;].entries() // iterator [0, &amp;quot;a&amp;quot;], [1,&amp;quot;b&amp;quot;], [2,&amp;quot;c&amp;quot;]
+[&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;].keys() // iterator 0, 1, 2
+[&amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;].values() // iterator &amp;quot;a&amp;quot;, &amp;quot;b&amp;quot;, &amp;quot;c&amp;quot;
+
+Object.assign(Point, { origin: new Point(0,0) })
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;binary-and-octal-literals:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Binary and Octal Literals&lt;/h3&gt;
+
+&lt;p&gt;Two new numeric literal forms are added for binary (&lt;code&gt;b&lt;/code&gt;) and octal (&lt;code&gt;o&lt;/code&gt;).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;0b111110111 === 503 // true
+0o767 === 503 // true
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;promises:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Promises&lt;/h3&gt;
+
+&lt;p&gt;Promises are a library for asynchronous programming.  Promises are a first class representation of a value that may be made available in the future.  Promises are used in many existing JavaScript libraries.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function timeout(duration = 0) {
+    return new Promise((resolve, reject) =&amp;gt; {
+        setTimeout(resolve, duration);
+    })
+}
+
+var p = timeout(1000).then(() =&amp;gt; {
+    return timeout(2000);
+}).then(() =&amp;gt; {
+    throw new Error(&amp;quot;hmm&amp;quot;);
+}).catch(err =&amp;gt; {
+    return Promise.all([timeout(100), timeout(200)]);
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;reflect-api:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Reflect API&lt;/h3&gt;
+
+&lt;p&gt;Full reflection API exposing the runtime-level meta-operations on objects.  This is effectively the inverse of the Proxy API, and allows making calls corresponding to the same meta-operations as the proxy traps.  Especially useful for implementing proxies.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;var O = {a: 1};
+Object.defineProperty(O, &#39;b&#39;, {value: 2});
+O[Symbol(&#39;c&#39;)] = 3;
+
+Reflect.ownKeys(O); // [&#39;a&#39;, &#39;b&#39;, Symbol(c)]
+
+function C(a, b) {
+  this.c = a + b;
+}
+var instance = Reflect.construct(C, [20, 22]);
+instance.c; // 42
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;tail-calls:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Tail Calls&lt;/h3&gt;
+
+&lt;p&gt;Calls in tail-position are guaranteed to not grow the stack unboundedly.  Makes recursive algorithms safe in the face of unbounded inputs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-JavaScript&#34;&gt;function factorial(n, acc = 1) {
+    &#39;use strict&#39;;
+    if (n &amp;lt;= 1) return acc;
+    return factorial(n - 1, n * acc);
+}
+
+// Stack overflow in most implementations today,
+// but safe on arbitrary inputs in ES6
+factorial(100000)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;es7-features:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;ES7 Features&lt;/h1&gt;
+
+&lt;h2 id=&#34;introduction-1:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;ECMAScript 7 is the next evolution of the ECMA-262 standard, this is at a very early stage, you may want to checkout &lt;a href=&#34;https://github.com/hemanth/paws-on-es6&#34;&gt;paws-on-es6&lt;/a&gt; and &lt;a href=&#34;http://jsfeatures.in&#34;&gt;jsfeatures.in&lt;/a&gt; as well.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;List of ES7 features:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;!-- START doctoc generated TOC please keep comment here to allow auto update --&gt;
+
+&lt;!-- DON&#39;T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE --&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#exponentiation-operator&#34;&gt;Exponentiation Operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#async-functions&#34;&gt;Async functions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#async-generators&#34;&gt;Async generators&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#objectgetownpropertydescriptors&#34;&gt;Object.getOwnPropertyDescriptors&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#objectvalues&#34;&gt;Object.values&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#objectentries&#34;&gt;Object.entries&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#arrayprototypeincludes&#34;&gt;Array.prototype.includes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#typed-objects&#34;&gt;Typed Objects&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#trailing-commas-in-function-syntax&#34;&gt;Trailing commas in function syntax.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#class-decorators&#34;&gt;Class decorators.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#class-properties&#34;&gt;Class properties&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#mapprototypetojson&#34;&gt;Map.prototype.toJSON&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#setprototypetojson&#34;&gt;Set.prototype.toJSON&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#stringprototypeat&#34;&gt;String.prototype.at&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#object-rest-properties&#34;&gt;Object rest properties&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#object-spread-properties&#34;&gt;Object spread properties&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#stringprototypepadleft&#34;&gt;String.prototype.padLeft&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#stringprototypepadright&#34;&gt;String.prototype.padRight&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#stringprototypetrimleft&#34;&gt;String.prototype.trimLeft&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#stringprototypetrimright&#34;&gt;String.prototype.trimRight&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#regexpescape&#34;&gt;Regexp.escape&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#bind-operator&#34;&gt;Bind Operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#reflectrealm&#34;&gt;Reflect.Realm&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- END doctoc generated TOC please keep comment here to allow auto update --&gt;
+
+&lt;h1 id=&#34;exponentiation-operator:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Exponentiation Operator&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Performs exponential calculation on operands. Same algorithm as &lt;code&gt;Math.pow(x, y)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Stage: Draft.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;
+let cubed = x =&amp;gt; x ** 3;
+
+cubed(2) // 8;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;async-functions:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Async functions&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Deferred Functions&lt;/p&gt;
+
+&lt;p&gt;Stage: Proposal.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;function wait(t){
+  return new Promise((r) =&amp;gt; setTimeout(r, t));
+}
+
+async function asyncMania(){
+  console.log(&amp;quot;1&amp;quot;);
+  await wait(1000);
+  console.log(&amp;quot;2&amp;quot;);
+}
+
+asyncMania()
+.then(() =&amp;gt; console.log(&amp;quot;3&amp;quot;));
+
+// logs: 1 2 3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;async-generators:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Async generators&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Deferred generators.&lt;/p&gt;
+
+&lt;p&gt;Stage: Proposal.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// provider
+async function* nums() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+// consumer
+async function printData() {
+  for(var x on nums()) {
+    console.log(x);
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;object-getownpropertydescriptors:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Object.getOwnPropertyDescriptors&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Returns a property descriptor for an own property.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;// Creating a shallow copy.
+var shallowCopy = Object.create(
+  Object.getPrototypeOf(originalObject),
+  Object.getOwnPropertyDescriptors(originalObject)
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;object-values:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Object.values&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Get all the values of the object as an array.&lt;/p&gt;
+
+&lt;p&gt;Stage: Shall reach Strawman&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var person = { fname: &amp;quot;Hemanth&amp;quot;, lname: &amp;quot;HM&amp;quot;, location: &amp;quot;Earth&amp;quot;, type: &amp;quot;Human&amp;quot; };
+
+Object.values(person);
+
+//^ [&amp;quot;Hemanth&amp;quot;,&amp;quot;HM&amp;quot;,&amp;quot;Earth&amp;quot;,&amp;quot;Human&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;object-entries:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Object.entries&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Returns a Array of arrays of key,value pairs.&lt;/p&gt;
+
+&lt;p&gt;Stage: Shall reach Strawman&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var person = { fname: &amp;quot;Hemanth&amp;quot;, lname: &amp;quot;HM&amp;quot;, location: &amp;quot;Earth&amp;quot;, type: &amp;quot;Human&amp;quot; };
+
+Object.entries(person);
+
+//^ [[&amp;quot;fname&amp;quot;,&amp;quot;Hemanth&amp;quot;],[&amp;quot;lname&amp;quot;,&amp;quot;HM&amp;quot;],[&amp;quot;location&amp;quot;,&amp;quot;Earth&amp;quot;],[&amp;quot;type&amp;quot;,&amp;quot;Human&amp;quot;]]
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;array-prototype-includes:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Array.prototype.includes&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Determines whether an array includes a certain element or not.&lt;/p&gt;
+
+&lt;p&gt;Stage: Draft.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;[1, 2, 3].includes(3, 0, 7); // true
+[1, 2, NaN].includes(NaN); // true
+[0,+1,-1].includes(42); // false
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;typed-objects:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Typed Objects&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Portable, memory-safe, efficient, and structured access to contiguously allocated data.&lt;/p&gt;
+
+&lt;p&gt;Stage: Proposal.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var Point = new StructType({
+  x: int32,
+  y: int32
+});
+
+var point = new Point({
+  x: 42,
+  y: 420
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;trailing-commas-in-function-syntax:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Trailing commas in function syntax.&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Trailing commas in parameter and argument lists.&lt;/p&gt;
+
+&lt;p&gt;Stage: Proposal&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var meow = function (cat1, cat2,) {}
+
+Math.max(4,2,0,);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;class-decorators:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Class decorators.&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Annotate and modify classes and properties at design time.&lt;/p&gt;
+
+&lt;p&gt;Stage: Proposal.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;class Person {
+  @cantEnum
+  get kidCount() { return this.children.length; }
+}
+
+function cantEnum(target, name, descriptor) {
+  descriptor.enumerable = false;
+  return descriptor;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;class-properties:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Class properties&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Properties of class.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;class Cat {
+  name = &#39;Garfield&#39;;
+  static says = &#39;meow&#39;;
+}
+new Cat().name; // Garfield
+Cat.says; // meow
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;map-prototype-tojson:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Map.prototype.toJSON&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;toJSON&lt;/code&gt; for Maps.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var myMap = new Map();
+myMap.set(NaN, &amp;quot;not a number&amp;quot;);
+
+console.log(myMap.toJSON()); // {&amp;quot;NaN&amp;quot;:&amp;quot;not a number&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;set-prototype-tojson:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Set.prototype.toJSON&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;toJSON&lt;/code&gt; for Sets.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;var mySet = new Set();
+mySet.add(NaN);
+mySet.add(1);
+console.log(mySet.toJSON()) // {&amp;quot;1&amp;quot;:1,&amp;quot;NaN&amp;quot;:null}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;string-prototype-at:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;String.prototype.at&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;String containing the code point at the given position&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;&#39;abc\uD834\uDF06def&#39;.at(1) // &#39;b&#39;
+&#39;abc\uD834\uDF06def&#39;.at(3) // &#39;\uD834\uDF06&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;object-rest-properties:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Object rest properties&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Rest properties for object destructuring assignment.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;let { fname, lname, ...rest } = { fname: &amp;quot;Hemanth&amp;quot;, lname: &amp;quot;HM&amp;quot;, location: &amp;quot;Earth&amp;quot;, type: &amp;quot;Human&amp;quot; };
+fname; //&amp;quot;Hemanth&amp;quot;
+lname; //&amp;quot;HM&amp;quot;
+rest; // {location: &amp;quot;Earth&amp;quot;, type: &amp;quot;Human&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;object-spread-properties:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Object spread properties&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Spread properties for object destructuring assignment.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;let info = {fname, lname, ...rest};
+
+info; // { fname: &amp;quot;Hemanth&amp;quot;, lname: &amp;quot;HM&amp;quot;, location: &amp;quot;Earth&amp;quot;, type: &amp;quot;Human&amp;quot; }
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;string-prototype-padleft:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;String.prototype.padLeft&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;left justify and pad strings.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;&amp;quot;hello&amp;quot;.padLeft(4)            #=&amp;gt; &amp;quot;hello&amp;quot;
+&amp;quot;hello&amp;quot;.padLeft(20)           #=&amp;gt; &amp;quot;hello               &amp;quot;
+&amp;quot;hello&amp;quot;.padLeft(20, &#39;1234&#39;)   #=&amp;gt; &amp;quot;hello123412341234123&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;string-prototype-padright:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;String.prototype.padRight&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;right justify and pad strings.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;&amp;quot;hello&amp;quot;.padRight(4)            #=&amp;gt; &amp;quot;hello&amp;quot;
+&amp;quot;hello&amp;quot;.padRight(20)           #=&amp;gt; &amp;quot;               hello&amp;quot;
+&amp;quot;hello&amp;quot;.padRight(20, &#39;1234&#39;)   #=&amp;gt; &amp;quot;123412341234123hello&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;string-prototype-trimleft:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;String.prototype.trimLeft&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;left trims the string.&lt;/p&gt;
+
+&lt;p&gt;Stage: Candidate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;&#39; \t \n LeftTrim   \t\n&#39;.trimLeft(); // &#39;LeftTrim   \t\n&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;string-prototype-trimright:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;String.prototype.trimRight&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;right trims the string.&lt;/p&gt;
+
+&lt;p&gt;Stage: Candidate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;&#39; \t \n RightTrim   \t\n&#39;.trimRight(); // &#39; \t \n RightTrim&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;regexp-escape:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Regexp.escape&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Escapes any characters that would have special meaning in a regular expression.&lt;/p&gt;
+
+&lt;p&gt;Stage: Strawaman&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;RegExp.escape(&amp;quot;(*.*)&amp;quot;); // &amp;quot;\(\*\.\*\)&amp;quot;
+RegExp.escape(&amp;quot;｡^･ｪ･^｡&amp;quot;) // &amp;quot;｡\^･ｪ･\^｡&amp;quot;
+RegExp.escape(&amp;quot;😊 *_* +_+ ... 👍&amp;quot;); // &amp;quot;😊 \*_\* \+_\+ \.\.\. 👍&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;bind-operator:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Bind Operator&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;::&lt;/code&gt; Function binding and method extraction&lt;/p&gt;
+
+&lt;p&gt;Stage: Shall reach Strawman.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-js&#34;&gt;let log = (level, msg) =&amp;gt; ::console[level](msg);
+
+import { map, takeWhile, forEach } from &amp;quot;iterlib&amp;quot;;
+
+getPlayers()
+  ::map(x =&amp;gt; x.character())
+  ::takeWhile(x =&amp;gt; x.strength &amp;gt; 100)
+  ::forEach(x =&amp;gt; console.log(x));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;reflect-realm:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;Reflect.Realm&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;TDB&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;references:a743d05677118bb903c98e0c9cbb1bab&#34;&gt;References&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/lukehoban/es6features&#34;&gt;ES6 features&lt;/a&gt;
+&lt;a href=&#34;https://github.com/hemanth/es7-features&#34;&gt;ES7 features&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
