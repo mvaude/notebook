@@ -17,6 +17,8 @@ title = "Christmas Ideas"
 
 ### Accessories
 
+* [Hack Kit](http://hakshop.myshopify.com/products/hak5-field-kit)
+
 * [Hard Drive WD Blue 3 To](http://www.materiel.net/disque-dur-interne-3-5-pouces/western-digital-wd-blue-3-5-sata-iii-6-gb-s-3-to-122374.html)
 
 * [Hard Drive Dock station](http://www.materiel.net/dock-pour-disque-dur/advance-dual-easy-docking-bx-d3002u3-101807.html)
@@ -32,4 +34,5 @@ title = "Christmas Ideas"
 ![alt text](http://s9.postimg.org/n6ecsbj3j/Google_Pixel_C_Android_Tablet_with_Keyboard.jpg)
 
 ### Accessories
+
 
